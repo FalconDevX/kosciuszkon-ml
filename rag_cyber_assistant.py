@@ -515,8 +515,54 @@ def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
     }
 
 
+def _vt_file_headers(api_key: str) -> dict[str, str]:
+    """VirusTotal v3: only x-apikey (+ accept). Never set Content-Type for multipart — requests sets boundary."""
+    return {"x-apikey": api_key, "accept": "application/json"}
+
+
+def _vt_parse_upload_url(payload: dict[str, Any]) -> str | None:
+    """GET /files/upload_url returns data as URL string or nested object."""
+    data = payload.get("data")
+    if isinstance(data, str) and data.startswith("http"):
+        return data
+    if isinstance(data, dict):
+        url = data.get("url") or data.get("upload_url")
+        if isinstance(url, str) and url.startswith("http"):
+            return url
+    return None
+
+
+def _vt_submit_file_multipart(
+    url: str,
+    api_key: str,
+    upload_name: str,
+    file_body: bytes,
+    *,
+    use_api_key_header: bool,
+    timeout: int,
+) -> requests.Response:
+    """
+    POST multipart with form field name 'file' (VirusTotal /api/v3/files).
+    Do not pass Content-Type: multipart/form-data manually — boundary would be missing.
+    """
+    headers = _vt_file_headers(api_key) if use_api_key_header else {"accept": "application/json"}
+    upload_name = upload_name.strip() or "upload.bin"
+    files = {"file": (upload_name, file_body, "application/octet-stream")}
+    data: dict[str, str] = {}
+    zip_pw = os.getenv("VIRUSTOTAL_ZIP_PASSWORD", "").strip()
+    if zip_pw:
+        data["password"] = zip_pw
+    return requests.post(
+        url,
+        headers=headers,
+        files=files,
+        data=data or None,
+        timeout=timeout,
+    )
+
+
 def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str) -> dict[str, Any]:
-    """VirusTotal API v3 file lookup by SHA256; upload if unknown (same key as URL tool)."""
+    """VirusTotal API v3: GET file by SHA256; if 404, upload via POST /files (<32MB) or large upload URL (>=32MB)."""
     if not cfg.virustotal_api_key:
         return {
             "tool": "virustotal_file_report",
@@ -525,30 +571,62 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
             "filename": filename,
         }
 
-    max_mb = max(1, int(os.getenv("VIRUSTOTAL_MAX_FILE_MB", "32")))
-    max_bytes = max_mb * 1024 * 1024
-    if len(file_body) > max_bytes:
+    small_limit_mb = max(1, int(os.getenv("VIRUSTOTAL_MAX_FILE_MB", "32")))
+    large_limit_mb = max(small_limit_mb, int(os.getenv("VIRUSTOTAL_LARGE_FILE_MB", "650")))
+    small_limit_bytes = small_limit_mb * 1024 * 1024
+    large_limit_bytes = large_limit_mb * 1024 * 1024
+    size = len(file_body)
+    if size > large_limit_bytes:
         return {
             "tool": "virustotal_file_report",
             "ok": False,
-            "error": f"File exceeds VIRUSTOTAL_MAX_FILE_MB={max_mb}",
+            "error": f"File exceeds VIRUSTOTAL_LARGE_FILE_MB={large_limit_mb}",
             "filename": filename,
-            "size_bytes": len(file_body),
+            "size_bytes": size,
         }
 
-    headers = {"x-apikey": cfg.virustotal_api_key}
+    headers = _vt_file_headers(cfg.virustotal_api_key)
     sha256_hex = hashlib.sha256(file_body).hexdigest()
+    upload_name = filename.strip() or "upload.bin"
 
     api_url = f"https://www.virustotal.com/api/v3/files/{sha256_hex}"
     response = requests.get(api_url, headers=headers, timeout=60)
     if response.status_code == 404:
-        upload_name = filename.strip() or "upload.bin"
-        submit = requests.post(
-            "https://www.virustotal.com/api/v3/files",
-            headers=headers,
-            files={"file": (upload_name, file_body)},
-            timeout=120,
-        )
+        vt_small_url = "https://www.virustotal.com/api/v3/files"
+        if size <= small_limit_bytes:
+            submit = _vt_submit_file_multipart(
+                vt_small_url,
+                cfg.virustotal_api_key,
+                upload_name,
+                file_body,
+                use_api_key_header=True,
+                timeout=120,
+            )
+        else:
+            up = requests.get(
+                "https://www.virustotal.com/api/v3/files/upload_url",
+                headers=headers,
+                timeout=60,
+            )
+            up.raise_for_status()
+            large_url = _vt_parse_upload_url(up.json())
+            if not large_url:
+                return {
+                    "tool": "virustotal_file_report",
+                    "ok": False,
+                    "error": "VirusTotal upload_url response missing URL",
+                    "filename": upload_name,
+                    "size_bytes": size,
+                }
+            # Signed upload URL (App Engine) — same as vt-py: POST multipart only, no x-apikey.
+            submit = _vt_submit_file_multipart(
+                large_url,
+                cfg.virustotal_api_key,
+                upload_name,
+                file_body,
+                use_api_key_header=False,
+                timeout=600,
+            )
         submit.raise_for_status()
         submit_body = submit.json()
         file_id = ((submit_body.get("data") or {}).get("id") or sha256_hex)
