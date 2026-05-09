@@ -75,7 +75,7 @@ Analysis:
 Recommendation:
 - short recommendation
 
-Answer in Polish language unless the user asks otherwise.
+LANGUAGE: Write the entire answer in English (all sections and bullets). You may quote raw tool fields (e.g. malicious) as-is. If the user explicitly asks for another language, follow that request.
 """
 
 
@@ -180,6 +180,7 @@ def _build_chat_messages(
                     "2) Never say you cannot access or verify the link when tool evidence exists.\n"
                     "3) If tool evidence conflicts with user claims, explain the conflict.\n"
                     "4) Use VirusTotal stats directly; do not reinterpret them.\n"
+                    "5) Respond in English unless the user explicitly asks for another language.\n"
                 ),
             }
         )
@@ -188,7 +189,7 @@ def _build_chat_messages(
         user_prompt = (
             "QUESTION:\n"
             f"{question}\n\n"
-            "Use only tool evidence for URL safety verdict."
+            "Base the URL safety verdict only on TOOL EVIDENCE. Answer in English."
         )
     else:
         user_prompt = (
@@ -196,7 +197,7 @@ def _build_chat_messages(
             f"{context_block}\n\n"
             "QUESTION:\n"
             f"{question}\n\n"
-            "Answer in Polish unless the user asks otherwise."
+            "Answer in English unless the user explicitly asks for another language."
         )
     messages.append({"role": "user", "content": user_prompt})
     return messages
