@@ -7,6 +7,7 @@ import hashlib
 import base64
 import re
 import heapq
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -485,14 +486,30 @@ def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
         submit.raise_for_status()
         submit_body = submit.json()
         analysis_id = (submit_body.get("data") or {}).get("id", "")
-        return {
-            "tool": "virustotal_url_report",
-            "ok": True,
-            "url": url,
-            "status": "submitted_for_analysis",
-            "analysis_id": analysis_id,
-            "note": "URL submitted to VirusTotal. Ask again in a few seconds for final verdict.",
-        }
+        try:
+            _vt_poll_analysis_until_completed(cfg.virustotal_api_key, analysis_id)
+        except (TimeoutError, RuntimeError, ValueError, RequestException) as exc:
+            return {
+                "tool": "virustotal_url_report",
+                "ok": False,
+                "url": url,
+                "error": str(exc),
+            }
+        response = None
+        for _ in range(8):
+            response = requests.get(api_url, headers=headers, timeout=40)
+            if response.status_code == 200:
+                break
+            if response.status_code != 404:
+                response.raise_for_status()
+            time.sleep(0.75)
+        if response is None or response.status_code != 200:
+            return {
+                "tool": "virustotal_url_report",
+                "ok": False,
+                "url": url,
+                "error": "URL report still unavailable after analysis completed",
+            }
 
     response.raise_for_status()
     body = response.json()
@@ -518,6 +535,39 @@ def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
 def _vt_file_headers(api_key: str) -> dict[str, str]:
     """VirusTotal v3: only x-apikey (+ accept). Never set Content-Type for multipart — requests sets boundary."""
     return {"x-apikey": api_key, "accept": "application/json"}
+
+
+def _vt_analysis_poll_settings() -> tuple[float, int]:
+    interval = float(os.getenv("VIRUSTOTAL_ANALYSIS_POLL_INTERVAL_SECS", "2"))
+    max_wait = int(os.getenv("VIRUSTOTAL_ANALYSIS_POLL_MAX_SECS", "120"))
+    return max(interval, 0.5), max(max_wait, 15)
+
+
+def _vt_poll_analysis_until_completed(api_key: str, analysis_id: str) -> None:
+    """Block until VirusTotal /analyses/{id} reports status completed (or fail/timeout)."""
+    if not analysis_id or not str(analysis_id).strip():
+        raise ValueError("empty analysis_id from VirusTotal submit response")
+    headers = _vt_file_headers(api_key)
+    interval, max_wait = _vt_analysis_poll_settings()
+    deadline = time.monotonic() + max_wait
+    poll_url = f"https://www.virustotal.com/api/v3/analyses/{analysis_id}"
+    last_status = ""
+    while time.monotonic() < deadline:
+        resp = requests.get(poll_url, headers=headers, timeout=45)
+        resp.raise_for_status()
+        body = resp.json()
+        last_status = str(
+            (((body.get("data") or {}).get("attributes") or {}).get("status") or "")
+        ).lower()
+        if last_status == "completed":
+            return
+        if last_status in ("failed", "aborted"):
+            raise RuntimeError(f"VirusTotal analysis ended with status={last_status!r}")
+        time.sleep(interval)
+    raise TimeoutError(
+        f"VirusTotal analysis not completed after {max_wait}s "
+        f"(analysis_id={analysis_id!r}, last_status={last_status!r})"
+    )
 
 
 def _vt_parse_upload_url(payload: dict[str, Any]) -> str | None:
@@ -629,16 +679,34 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
             )
         submit.raise_for_status()
         submit_body = submit.json()
-        file_id = ((submit_body.get("data") or {}).get("id") or sha256_hex)
-        return {
-            "tool": "virustotal_file_report",
-            "ok": True,
-            "filename": upload_name,
-            "sha256": sha256_hex,
-            "status": "submitted_for_analysis",
-            "file_id": file_id,
-            "note": "File submitted to VirusTotal. Ask again shortly for full analysis.",
-        }
+        analysis_id = ((submit_body.get("data") or {}).get("id") or "")
+        try:
+            _vt_poll_analysis_until_completed(cfg.virustotal_api_key, analysis_id)
+        except (TimeoutError, RuntimeError, ValueError, RequestException) as exc:
+            return {
+                "tool": "virustotal_file_report",
+                "ok": False,
+                "filename": upload_name,
+                "sha256": sha256_hex,
+                "error": str(exc),
+            }
+        # Analysis done — fetch full file report (brief retry for VT indexing).
+        response = None
+        for _ in range(8):
+            response = requests.get(api_url, headers=headers, timeout=60)
+            if response.status_code == 200:
+                break
+            if response.status_code != 404:
+                response.raise_for_status()
+            time.sleep(0.75)
+        if response is None or response.status_code != 200:
+            return {
+                "tool": "virustotal_file_report",
+                "ok": False,
+                "filename": upload_name,
+                "sha256": sha256_hex,
+                "error": "file report not available after analysis completed",
+            }
 
     response.raise_for_status()
     body = response.json()
