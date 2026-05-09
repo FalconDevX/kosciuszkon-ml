@@ -13,13 +13,29 @@ from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer, util
 
 
-SYSTEM_PROMPT = """You are CyberEdu Assistant, a cybersecurity educator.
-Your job is to explain clearly, safely, and practically for non-experts.
-Use only the provided context when stating specific facts.
-If the context is insufficient, say what is missing and give general safe guidance.
-Never provide instructions for harmful, illegal, or abusive actions.
-Prefer step-by-step defensive advice and concrete examples.
-Prefer shorter and precise answers.
+SYSTEM_PROMPT = """You are CyberEdu Assistant.
+
+Rules:
+- Tool results are the highest priority source of truth.
+- Never deny access to a URL if tool results exist.
+- Never explain limitations when tool results are available.
+- Never reinterpret VirusTotal statistics.
+- If VirusTotal says malicious=0 and suspicious=0, treat it as no known detections.
+- Keep answers short and practical.
+- Do not explain the tool itself.
+- Do not mention TOOL EVIDENCE or TOOL RESULTS.
+- Focus only on final cybersecurity analysis.
+- Never provide instructions for harmful, illegal, or abusive actions.
+
+Respond ONLY in this format:
+Risk: LOW/MEDIUM/HIGH
+
+Analysis:
+- short bullet
+- short bullet
+
+Recommendation:
+- short recommendation
 """
 
 
@@ -66,7 +82,7 @@ def load_config() -> AppConfig:
         ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
         ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "2048")),
         ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "220")),
-        ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.2")),
+        ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
         ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
         ollama_require_gpu_only=os.getenv("OLLAMA_REQUIRE_GPU_ONLY", "true").lower() in {"1", "true", "yes"},
@@ -225,6 +241,32 @@ def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
     return tool_results
 
 
+def print_tool_results(tool_results: list[dict[str, Any]]) -> None:
+    for item in tool_results:
+        tool_name = item.get("tool", "unknown_tool")
+        ok = item.get("ok", False)
+        url = item.get("url", "")
+        if not ok:
+            print(f"[tool] {tool_name} failed for {url}: {item.get('error', 'unknown error')}")
+            continue
+        stats = item.get("last_analysis_stats", {})
+        if stats:
+            print(
+                f"[tool] {tool_name} ok for {url} | "
+                f"malicious={stats.get('malicious', 0)} "
+                f"suspicious={stats.get('suspicious', 0)} "
+                f"harmless={stats.get('harmless', 0)}"
+            )
+        else:
+            print(f"[tool] {tool_name} ok for {url} | status={item.get('status', 'done')}")
+
+
+def build_tool_evidence(tool_results: list[dict[str, Any]] | None) -> str:
+    if not tool_results:
+        return "[]"
+    return json.dumps(tool_results, ensure_ascii=False, indent=2)
+
+
 def ask_ollama(
     cfg: AppConfig,
     question: str,
@@ -244,19 +286,36 @@ def ask_ollama(
         )
 
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    if tool_results:
+        messages.append(
+            {
+                "role": "system",
+                "content": (
+                    "TOOL EVIDENCE (trusted external data, highest priority):\n"
+                    f"{build_tool_evidence(tool_results)}\n\n"
+                    "Rules:\n"
+                    "1) Treat TOOL EVIDENCE as factual input.\n"
+                    "2) Never say you cannot access or verify the link when tool evidence exists.\n"
+                    "3) If tool evidence conflicts with user claims, explain the conflict.\n"
+                    "4) Use VirusTotal stats directly; do not reinterpret them.\n"
+                ),
+            }
+        )
     messages.extend(chat_history[-8:])
-    user_prompt = (
-        "Use the context below to answer the question.\n\n"
-        "CONTEXT:\n"
-        f"{context_block}\n\n"
-        "TOOL RESULTS (trusted external checks, JSON):\n"
-        f"{json.dumps(tool_results or [], ensure_ascii=False)}\n\n"
-        "QUESTION:\n"
-        f"{question}\n\n"
-        "If TOOL RESULTS include VirusTotal data, summarize risk clearly "
-        "(malicious/suspicious counts, confidence, and practical next step).\n"
-        "Answer in Polish unless the user asks otherwise."
-    )
+    if tool_results:
+        user_prompt = (
+            "QUESTION:\n"
+            f"{question}\n\n"
+            "Use only tool evidence for URL safety verdict."
+        )
+    else:
+        user_prompt = (
+            "CONTEXT:\n"
+            f"{context_block}\n\n"
+            "QUESTION:\n"
+            f"{question}\n\n"
+            "Answer in Polish unless the user asks otherwise."
+        )
     messages.append({"role": "user", "content": user_prompt})
 
     last_error = None
@@ -419,6 +478,8 @@ def main() -> None:
         matches = retrieve_context(rows, index_embeddings, embedder, cfg, question)
         context_block = build_context_block(matches, cfg.max_context_chars)
         tool_results = maybe_run_tools(cfg, question)
+        if tool_results:
+            print_tool_results(tool_results)
         try:
             ensure_gpu_only_or_raise(cfg)
             answer = ask_ollama(cfg, question, context_block, history, tool_results=tool_results)
