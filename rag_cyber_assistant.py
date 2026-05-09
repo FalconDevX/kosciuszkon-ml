@@ -3,6 +3,7 @@ import os
 import json
 import base64
 import re
+import heapq
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -10,7 +11,7 @@ from requests.exceptions import RequestException, ReadTimeout
 
 import requests
 from dotenv import load_dotenv
-from sentence_transformers import SentenceTransformer, util
+from rank_bm25 import BM25Okapi
 
 
 SYSTEM_PROMPT = """You are CyberEdu Assistant.
@@ -39,19 +40,20 @@ Recommendation:
 """
 
 
+def tokenize_bm25(text: str) -> list[str]:
+    return re.findall(r"\w+", text.lower(), flags=re.UNICODE)
+
+
 @dataclass
 class AppConfig:
     chunks_path: str
     top_k: int
-    embedding_model: str
     ollama_url: str
     ollama_model: str
     ollama_num_ctx: int
     ollama_num_predict: int
     ollama_temperature: float
-    ollama_num_gpu: int
     ollama_num_thread: int
-    ollama_require_gpu_only: bool
     ollama_timeout_secs: int
     ollama_retries: int
     ollama_stream: bool
@@ -74,21 +76,15 @@ def load_config() -> AppConfig:
     return AppConfig(
         chunks_path=chunks_path,
         top_k=int(os.getenv("TOP_K", "5")),
-        embedding_model=os.getenv(
-            "EMBEDDING_MODEL",
-            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        ),
         ollama_url=ollama_url,
         ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
-        ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "2048")),
-        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "220")),
+        ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "1024")),
+        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "128")),
         ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
-        ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
-        ollama_require_gpu_only=os.getenv("OLLAMA_REQUIRE_GPU_ONLY", "false").lower() in {"1", "true", "yes"},
         ollama_timeout_secs=int(os.getenv("OLLAMA_TIMEOUT_SECS", "300")),
         ollama_retries=int(os.getenv("OLLAMA_RETRIES", "2")),
-        ollama_stream=os.getenv("OLLAMA_STREAM", "false").lower() in {"1", "true", "yes"},
+        ollama_stream=os.getenv("OLLAMA_STREAM", "true").lower() in {"1", "true", "yes"},
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
         virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY", "").strip(),
     )
@@ -105,20 +101,30 @@ def load_local_chunks(chunks_path: str) -> list[dict[str, Any]]:
     return rows
 
 
-def retrieve_context(
+def build_bm25_index(rows: list[dict[str, Any]]) -> BM25Okapi:
+    corpus_tokens: list[list[str]] = []
+    for row in rows:
+        blob = f"{row.get('title', '')} {row.get('text', '')}"
+        corpus_tokens.append(tokenize_bm25(blob))
+    return BM25Okapi(corpus_tokens)
+
+
+def retrieve_context_bm25(
     index_rows: list[dict[str, Any]],
-    index_embeddings: Any,
-    embedder: SentenceTransformer,
+    bm25: BM25Okapi,
     cfg: AppConfig,
     question: str,
 ) -> list[dict[str, Any]]:
-    query_embedding = embedder.encode(question, convert_to_tensor=True, normalize_embeddings=True)
-    scores = util.cos_sim(query_embedding, index_embeddings)[0]
-    top_k = min(cfg.top_k, len(index_rows))
-    top_values, top_indices = scores.topk(k=top_k)
+    q_tokens = tokenize_bm25(question)
+    if not q_tokens or not index_rows:
+        return []
+
+    scores = bm25.get_scores(q_tokens)
+    k = min(cfg.top_k, len(index_rows))
+    top_idx = heapq.nlargest(k, range(len(scores)), key=lambda i: scores[i])
 
     results = []
-    for score, idx in zip(top_values.tolist(), top_indices.tolist()):
+    for idx in top_idx:
         row = index_rows[idx]
         results.append(
             {
@@ -129,8 +135,7 @@ def retrieve_context(
                 "chunk_index": int(row.get("chunk_index", 0)),
                 "chunk_chars": int(row.get("chunk_chars", len(row.get("text", "")))),
                 "text_content": row.get("text", ""),
-                # Keep naming consistent with previous output, but cosine score is similarity.
-                "distance": float(score),
+                "distance": float(scores[idx]),
             }
         )
     return results
@@ -142,7 +147,7 @@ def build_context_block(matches: list[dict[str, Any]], max_chars: int) -> str:
     for idx, item in enumerate(matches, start=1):
         block = (
             f"[SOURCE {idx}] title={item['title']} issue_date={item['issue_date']} "
-            f"chunk_id={item['chunk_id']} similarity={item['distance']:.4f}\n"
+            f"chunk_id={item['chunk_id']} bm25_score={item['distance']:.4f}\n"
             f"{item['text_content']}\n"
         )
         if used + len(block) > max_chars:
@@ -276,7 +281,6 @@ def ask_ollama(
 ) -> str:
     def extract_text(payload: dict[str, Any]) -> str:
         message = payload.get("message", {}) or {}
-        # Some Ollama/model combinations emit text under different keys.
         return (
             message.get("content")
             or message.get("reasoning_content")
@@ -318,6 +322,13 @@ def ask_ollama(
         )
     messages.append({"role": "user", "content": user_prompt})
 
+    ollama_options: dict[str, Any] = {
+        "num_ctx": cfg.ollama_num_ctx,
+        "num_predict": cfg.ollama_num_predict,
+        "temperature": cfg.ollama_temperature,
+        "num_thread": cfg.ollama_num_thread,
+    }
+
     last_error = None
     for attempt in range(1, cfg.ollama_retries + 1):
         try:
@@ -327,13 +338,8 @@ def ask_ollama(
                     "model": cfg.ollama_model,
                     "messages": messages,
                     "stream": cfg.ollama_stream,
-                    "options": {
-                        "num_ctx": cfg.ollama_num_ctx,
-                        "num_predict": cfg.ollama_num_predict,
-                        "temperature": cfg.ollama_temperature,
-                        "num_gpu": cfg.ollama_num_gpu,
-                        "num_thread": cfg.ollama_num_thread,
-                    },
+                    "keep_alive": os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                    "options": ollama_options,
                 },
                 timeout=cfg.ollama_timeout_secs,
                 stream=True,
@@ -348,7 +354,6 @@ def ask_ollama(
                     try:
                         body = json.loads(line)
                     except json.JSONDecodeError:
-                        # Ignore non-JSON stream lines and keep consuming output.
                         continue
                     token = extract_text(body)
                     if token:
@@ -365,20 +370,14 @@ def ask_ollama(
             if full_text.strip():
                 return full_text.strip()
 
-            # Fallback: some model/runtime combos may return empty streamed content.
             fallback = requests.post(
                 f"{cfg.ollama_url}/api/chat",
                 json={
                     "model": cfg.ollama_model,
                     "messages": messages,
                     "stream": False,
-                    "options": {
-                        "num_ctx": cfg.ollama_num_ctx,
-                        "num_predict": cfg.ollama_num_predict,
-                        "temperature": cfg.ollama_temperature,
-                        "num_gpu": cfg.ollama_num_gpu,
-                        "num_thread": cfg.ollama_num_thread,
-                    },
+                    "keep_alive": os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                    "options": ollama_options,
                 },
                 timeout=cfg.ollama_timeout_secs,
             )
@@ -388,9 +387,8 @@ def ask_ollama(
             if fallback_text and fallback_text.strip():
                 return fallback_text.strip()
             raise RuntimeError(
-                "Ollama returned an empty response. Try reducing load "
-                "(smaller model, lower num_ctx/num_predict), set OLLAMA_STREAM=false, "
-                "or disable GPU-only enforcement."
+                "Ollama returned an empty response. Try smaller num_ctx/num_predict "
+                "or set OLLAMA_STREAM=false."
             )
         except ReadTimeout as exc:
             last_error = exc
@@ -408,57 +406,14 @@ def ask_ollama(
     ) from last_error
 
 
-def ensure_gpu_only_or_raise(cfg: AppConfig) -> None:
-    if not cfg.ollama_require_gpu_only:
-        return
-    try:
-        response = requests.get(
-            f"{cfg.ollama_url}/api/ps",
-            timeout=20,
-        )
-        response.raise_for_status()
-        body = response.json()
-    except RequestException as exc:
-        raise RuntimeError(
-            "Cannot verify Ollama processor usage via /api/ps. "
-            "Set OLLAMA_REQUIRE_GPU_ONLY=false to skip this check."
-        ) from exc
-
-    models = body.get("models", [])
-    if not models:
-        return
-
-    target = None
-    for model in models:
-        model_name = model.get("model", "") or model.get("name", "")
-        if model_name == cfg.ollama_model:
-            target = model
-            break
-    if target is None:
-        target = models[0]
-
-    processor = (target.get("processor") or "").strip().lower()
-    if "cpu" in processor:
-        raise RuntimeError(
-            f"GPU-only mode enabled but Ollama reports processor='{processor}'. "
-            "Choose a smaller model or reduce context so it can fully offload to GPU."
-        )
-
-
 def main() -> None:
     cfg = load_config()
-    print(f"Loading embedding model: {cfg.embedding_model}")
-    embedder = SentenceTransformer(cfg.embedding_model)
+    print("Retrieval: BM25 (no sentence-transformers / torch)")
     print(f"Loading local chunks: {cfg.chunks_path}")
     rows = load_local_chunks(cfg.chunks_path)
     if not rows:
         raise ValueError("No rows found in local chunks file.")
-    index_embeddings = embedder.encode(
-        [row.get("text", "") for row in rows],
-        convert_to_tensor=True,
-        normalize_embeddings=True,
-        show_progress_bar=True,
-    )
+    bm25 = build_bm25_index(rows)
 
     print(f"Local index rows={len(rows)}")
     print(f"Ollama model: {cfg.ollama_model} at {cfg.ollama_url}")
@@ -475,13 +430,12 @@ def main() -> None:
         if question.lower() in {"exit", "quit"}:
             break
 
-        matches = retrieve_context(rows, index_embeddings, embedder, cfg, question)
+        matches = retrieve_context_bm25(rows, bm25, cfg, question)
         context_block = build_context_block(matches, cfg.max_context_chars)
         tool_results = maybe_run_tools(cfg, question)
         if tool_results:
             print_tool_results(tool_results)
         try:
-            ensure_gpu_only_or_raise(cfg)
             answer = ask_ollama(cfg, question, context_block, history, tool_results=tool_results)
         except RuntimeError as exc:
             print(f"\nAssistant> {exc}\n")

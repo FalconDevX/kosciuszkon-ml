@@ -4,4 +4,4 @@ pypdf
 psycopg[binary]
 python-dotenv
 requests
-sentence-transformers
+rank-bm25

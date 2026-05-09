@@ -1,0 +1,3 @@
+# Optional: only for save_embeddings.py (precomputed vectors), not needed for BM25 rag_cyber_assistant.
+numpy
+sentence-transformers
