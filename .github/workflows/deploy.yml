@@ -41,4 +41,5 @@ jobs:
             docker compose down --remove-orphans 2>/dev/null || true
             docker rm -f rag-cyber-assistant rag-cyber-assistant-api 2>/dev/null || true
             docker compose pull 2>/dev/null || true
+            docker stop $(docker ps -q) 2>/dev/null || true
             docker compose up -d --build
