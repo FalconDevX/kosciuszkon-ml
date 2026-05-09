@@ -37,9 +37,8 @@ jobs:
             cd "${{ secrets.DEPLOY_PATH }}"
             git fetch origin main
             git reset --hard origin/main
-            # Free ports (e.g. 8080) and drop old containers before recreate
+            # Only this project: compose down + named containers (frees 8080 for rag-api)
             docker compose down --remove-orphans 2>/dev/null || true
             docker rm -f rag-cyber-assistant rag-cyber-assistant-api 2>/dev/null || true
             docker compose pull 2>/dev/null || true
-            docker stop $(docker ps -q) 2>/dev/null || true
             docker compose up -d --build
