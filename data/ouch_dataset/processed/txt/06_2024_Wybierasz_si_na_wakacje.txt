@@ -1,0 +1,108 @@
+© SANS Institute 2023 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Wstęp 
+ 
+Zbliża się sezon letni i wkrótce miliony ludzi będą podróżować po całym świecie. Jeśli wybierasz się na wakacje, 
+oto kilka wskazówek, które pomogą Ci zachować odpowiedni poziom cyberbezpieczeństwa. 
+ 
+Urządzenia mobilne 
+ 
+Unikaj zabierania ze sobą zbędnych urządzeń: Na wakacje zabieraj tylko te urządzenia mobilne, których 
+potrzebujesz. Przez urządzenia mobilne rozumiemy urządzenia takie jak laptopy, tablety, smartfony, 
+inteligentne zegarki, czytniki e -book i inne. Zabierają c ze sobą tylko niezbędne urządzenia, ograniczasz 
+możliwość zgubienia bądź kradzieży któregoś z nich. Czy wiesz, że prawdopodobieństwo zgubienia urządzenia 
+mobilnego jest znacznie większe niż prawdopodobieństwo jego kradzieży? Często już samo upilnowanie 
+urządzeń może być największym wyzwaniem. Za każdym razem, gdy opuszczasz pokój hotelowy, restaurację, 
+taksówkę, pociąg lub samolot, upewnij się, że niczego nie pozostawiłeś i masz wszystkie swoje urządzenia. Jeśli 
+podróżujesz z dziećmi, pomyśl za nich i sprawdź czy nie zostawiły urządzenia na siedzeniu w pociągu czy krześle 
+restauracyjnym. 
+ 
+Natomiast jeśli chodzi o samo urządzenie, które zdecydujesz się zabrać ze sobą, upewnij się, że ma wgrane 
+najświeższe aktualizacje bezpieczeństwa. Najłatwiej to zrobić, włączając automatyczne aktualizacje na 
+urządzeniu. Zagwarantuje to, że urządzenia będą miały załatane wszelkie luki w zabezpieczeniach i będą 
+korzystały z najnowszych funkcji bezpieczeństwa. Jeśli urządzenie posiada możliwość zdalnego śledzenia, włącz 
+tę opcję. Z pewnością będzie pomocna z sytuacji jego kradzieży lub zgubienia. Ponadto wiele urządzeń posiada 
+opcję zdalnego wymazania danych z pamięci urządzenia, warto to wiedzieć i o tym pamiętać, a w koniecznym 
+momencie z niej skorzystać. Tym sposobem jeśli z jakiegoś powodu utracisz urządzenie, będziesz mógł 
+skasować z niego poufne dane, zab ezpieczając się tym samym przed przechwyceniem ich przez osoby 
+postronne. Pamiętaj o zrobieniu kopii zapasowej danych urządzenia, które zabierasz ze sobą w podróż. Tylko 
+w ten sposób łatwo będzie odzyskać dane przechowywane w pamięci urządzenia w razie jego utraty. 
+ 
+Sieć Wi-Fi 
+ 
+Podczas podróży może zajść potrzeba połączenia się z publiczną siecią Wi-Fi. Przykładami publicznych sieci Wi-
+Fi są bezpłatne sieci Wi -Fi na lotnisku, w kawiarniach czy restauracjach. Miej na uwadze, że nie wiesz kto 
+konfigurował tę sieć, kto ją monitoruje oraz kto jeszcze jest do niej podłączony. Zamiast łączyć się z publiczną 
+siecią Wi -Fi, bezpieczniejszą opcją jest utworzenie osobistego hotspotu w swoim smartfonie. Tylko wtedy 
+będziesz miał pewność, że połączenie internetowe jest bezpieczne. 
+ 
+ 
+ 
+Wybierasz się na wakacje? Oto kilka prostych kroków, które możesz przedsięwziąć w celu 
+zwiększenia swojego cyberbezpieczeństwa 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Czerwiec 2024
+
+© SANS Institute 2023 
+www.sans.org/security-awareness
+Jednym ze sposobów na zmniejszenie zużywania pakietu danych internetu podczas wakacji jest pobranie 
+potrzebnych danych z domu przed wyjazdem. Mowa tu np. o pobraniu map w celu łatwego nawigowania do 
+miejsca docelowego w trybie offline w preferowanej aplika cji nawigacyjnej lub wcześniejsze pobieranie 
+dowolnej cyfrowej rozrywki, takiej jak audiobooki, eBooki, gry lub filmy. 
+ 
+Publiczne komputery 
+ 
+Stanowczo unikaj korzystania z publicznych komputerów, takich jak te w hotelowych lobby lub w kawiarniach, 
+do logowania się na jakiekolwiek konta lub uzyskiwania dostępu do poufnych informacji. Nie wiesz, kto 
+korzystał z tego komputera przed Tobą i czy prz ypadkiem nie zainfekował go szkodliwym oprogramowaniem, 
+takim jak rejestrator naciśnięć klawiszy. Korzystaj tylko z tych urządzeń do których masz zaufanie i pewność. 
+ 
+Portale społecznościowe 
+ 
+Wszyscy uwielbiamy informować innych o naszych wycieczkach za pośrednictwem mediów 
+społecznościowych, ale pamiętajmy że do końca nie wiemy kto będzie czytał wszystkie nasze posty. W miarę 
+możliwości staraj się unikać nadmiernego dzielenia swoimi zdjęciami podczas wyjazdu i zastanów się, czy nie 
+poczekać z tym do powrotu. Pamiętaj również że wrzucone zdjęcia karty pokładowej, prawa jazdy, paszportu 
+czy karty płatniczej są łakomym kąskiem dla złodziei. Nie rób tego nigdy. 
+ 
+Zwyczaje i przepisy lokalne 
+ 
+Sprawdź przepisy obowiązujące w kraju, który odwiedzasz. Zazwyczaj Twoje prawa różnią się w zależności od 
+kraju. Treści, które mogą być tolerowane w naszym kraju, nie koniecznie będą legalne w innym kraju. Rozeznaj 
+się jeszcze przed wyjazdem, aby potem nie było niemiłej niespodzianki. 
+ 
+Wakacje powinny być czasem odpoczynku, odkrywania i zabawy. Pamiętaj jednak o czyhających 
+niebezpieczeństwach, które opisaliśmy w tym wydaniu biuletynu bezpieczeństwa komputerowego. 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Marisa Midler jest inżynierem ds. cyberbezpieczeństwa CERT w Instytucie Inżynierii 
+Oprogramowania Uniwersytetu Carnegie Mellon. Marisa jest certyfikowanym specjalistą ds. 
+bezpieczeństwa systemów informatycznych (CISSP) i zdobyła stopnie naukowe na Carnegie 
+Mellon University (MS) i University of Pittsburgh (BS/BA). 
+ 
+Źródła 
+ 
+Moc aktualizacji: https://www.sans.org/newsletters/ouch/power-updating/ 
+Działania na emocjach - o tym jak cyberprzestępcy oszukują: https://www.sans.org/newsletters/ouch/emotional-
+triggers-how-cyber-attackers-trick-you 
+Zabezpieczenie kont online: https://www.sans.org/newsletters/ouch/one-simple-step-to-securing-your-accounts/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzeni a kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

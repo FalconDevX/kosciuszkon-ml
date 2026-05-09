@@ -1,0 +1,103 @@
+© SANS Institute 2021 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Czym jest prywatność? 
+Istnieje wiele definicji pojęcia prywatność. W tym wydaniu biuletynu skupimy się na prywatności 
+osobistej, czyli ochronie informacji gromadzonych na nas. W dzisiejszym cyfrowym świecie istnieje wiele 
+podmiotów, które nie tylko zbierają informacje o każdym z nas, ale również handlują nimi. Za każdym 
+razem, gdy przeglądasz strony internetowe, robisz zakupy online, oglądasz filmy lub używasz aplikacji na 
+smartfonie, zbierane są informacje o Tobie. Informacje te są wykorzystywane w różny sposób, m.in. do 
+sprzedaży produktów i usług, do określenia rodzaju opieki zdrowotnej, którą świadczysz bądź miejsc pracy, 
+do któr ych się kwalifikujesz. Jeśli informacje te dostaną się w niepowołane ręce, mogą zostać 
+wykorzystane do ataków cybernetycznych na twoją osobę. 
+ 
+Celem zachowania prywatność osobistej jest zarządzenie swoim cyfrowym śladem, m.in. staraj się 
+unikać lub ograniczać gromadzenia informacji o tobie. Bądź świadomy, że w dzisiejszym cyfrowym 
+świecie, jest prawie niemożliwe, aby wyeliminować swój cyfrowy ślad lub powstrzymać każdą 
+organizację przed zbieraniem informacji, możemy tylko zmniejszyć ryzyko. 
+ 
+Kroki, które powinieneś podjąć, aby pomóc chronić swoją prywatność 
+Nie istnieje jeden sposób, który pozwoliłby rozwiązać wszystkie obawy związane z prywatnością. Zamiast 
+tego, będziesz musiał podjąć kilka mniejszych kroków, które zsumują się na zadowalający efekt końcowy. 
+Im więcej kroków zastosujesz, tym Twoja prywatność będzie lepiej chroniona. 
+ 
+● Ograniczaj to co publikujesz i udostępniasz innym w sieci, np. na forach publicznych lub w mediach 
+społecznościowych. Bądź ostrożny z publikacją zdjęć oraz selfie jakie udostępniasz w internecie. 
+Weź pod uwagę, że nawet na prywatnych forach lub grupach, to co napiszesz staje się publiczne. 
+● Tworząc konto internetowe, sprawdź jakie informacje są zbierane. Sprawdź politykę prywatność 
+oraz podawaj tylko te dane, które są absolutnie niezbędne. Jeśli masz jakiekolwiek wątpliwości do 
+zbierania danych oraz ich obiegu, zaprzestań tworzenia konta. 
+● Niezależnie jakie opcje prywatność ustawisz, niektóre serwisy, szczególnie te darmowe, tj. 
+Facebook lub WhatsApp nadaj zbierają informacje o Tobie. Usługi te z reguły opierają swój model 
+biznesowy na gromadzeniu danych o tym, co robisz i z kim wchodzisz w interakcje. Jeśli naprawdę 
+obawiasz się o swoją prywatność, nie korzystaj z tego typu darmowych serwisów. 
+● Sprawdzaj aplikacje mobilne przed ich pobraniem i zainstalowaniem. Czy pochodzą od zaufanego 
+wydawcy? Czy są one dostępne od dłuższego czasu? Czy mają dużo pozytywnych opinii? Sprawdź 
+wymagania dotyczące uprawnień. Zastanów się czy aplikacja mobilna naprawdę musi znać 
+lokalizację lub mieć dostęp do kontaktów? Jeśli nie czujesz się komfortowo, wybierz inną aplikację. 
+Szukaj aplikacji, które promują prywatność i dają możliwości skorzystania z niej. Chociaż możesz 
+być zmuszony zapłacić więcej za aplikację, która szanuje prywatność, może być tego warta. 
+Prywatność - chroń swoje cyfrowe życie 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Kwiecień 2021
+
+© SANS Institute 2021 
+www.sans.org/security-awareness
+● Rozważ skorzystanie z wirtualnej sieci prywatnej (VPN) dla połączeń internetowych, zwłaszcza gdy 
+korzystasz z sieci publicznej, takiej jak darmowe WiFi. 
+● Jeśli używasz przeglądarki, ustaw opcje prywatności na prywatne lub włącz tryb incognito, aby 
+ograniczyć zakres udostępnianych informacji, sposób używania i przechowywania plików cookie 
+oraz chronić historię przeglądania. Pomyśl nad rozszerzeniem prywatności poprzez instalację 
+dodatku do przeglądarki np. Privacy Badger lub innej przeglądarki nastawionej na ochronę 
+prywatności. 
+● Rozważ skorzystanie z anonimowych wyszukiwarek internetowych zaprojektowanych z myślą o 
+prywatności, takich jak DuckDuckGo lub StartPage. 
+ 
+Pod wieloma względami prywatność jest czymś, co bardzo trudno jest chronić, ponieważ wiele zależy od 
+przepisów i wymogów dotyczących prywatności w danym kraju oraz od etyki firm, z którymi masz do 
+czynienia. Chociaż nigdy nie można naprawdę chronić całej swojej prywatności w tym technologicznym 
+wieku, w którym żyjemy, przedstawione kroki pomogą ograniczyć ilość zbieranych informacji. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Kenton Smith jest szanowanym konsultantem i doradcą ds. bezpieczeństwa 
+cybernetycznego w Calgary w Kanadzie, specjalizującym się w opracowywaniu, 
+zarządzaniu i ocenie programów bezpieczeństwa. Prowadzi zajęcia z zarządzania w 
+instytucie SANS i można go znaleźć na Twitterze jako @kentonsmith lub okazjonalnie 
+na kentonsmith.net. 
+ 
+Źródła 
+ 
+Setting privacy options (EN): https://staysafeonline.org/stay-safe-online/managing-your-
+privacy/manage-privacy-settings/ 
+Kradzież tożsamości - ochroń się przed nią: https://www.sans.org/security-awareness-
+training/resources/identity-theft 
+Wirtualne Sieci Prywatne (VPN): https://www.sans.org/security-awareness-training/resources/virtual-
+private-networks-vpns 
+Odszukaj siebie w sieci: https://www.sans.org/security-awareness-training/resources/search-yourself-
+online 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+OUCH! powstaje w ramach programu "Security Awareness" Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license. 
+Powielanie treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia 
+kopiowanych treści oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, 
+Princess Young

@@ -1,0 +1,102 @@
+© SANS Institute 2023 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Historia 
+ 
+Dawid był zajęty oglądaniem swojego ulubionego serialu online, gdy na jego telefon zadzwonił numeru, 
+którego nie znał. Numer kierunkowy był taki sam jak jego, więc przypuszczał, że to ktoś z okolicy i 
+zdecydował się odebrać połączenie. Dawid został poproszony o potwierdzenie swojej tożsamości. 
+Dzwoniący powiedział mu, że jest z wydziału policji i wydano nakaz jego aresztowania. Dzwoniący 
+twierdził, że Dawid posiada nieuregulowane podatki i jeśli nie zostaną zapłacone w ciągu najbliższych 24 
+godzin, policja wyda nakaz jego aresztowania. Dawid był przerażony i zapytał, co powinien zrobić. 
+ 
+Dzwoniący podał mu numer telefonu urzędu s karbowego, gdzie mógłby uregulować zaległe płatności. 
+Dawid natychmiast odłożył słuchawkę i zadzwonił pod ten numer. Telefon odebrała uprzejma pani, która 
+przedstawiła się jako pracownica urzędu skarbowego. Dawid podał jej wszystkie wymagane dane. Po 
+chwili potwierdziła, że ma zaległe podatki w wysokości 1487,72 złotych. Powiedziała, że jeśli zapłaci w tym 
+momencie kartą kredytową, to ona zajmie się tą sprawą, a Dawid nie trafi do więzienia. Dawid odczuł ulgę 
+i natychmiast podał jej informacje ze swojej kar ty płatniczej, którą obciążyła, mówiąc mu, że wszystko 
+zostało rozwiązane. 
+ 
+Atak 
+ 
+Problem polegał na tym, że osoby dzwoniące nie były ani z policji, ani z urzędu skarbowego. Byli to 
+przestępcy działający razem w celu oszukiwania ludzi. Dzwonili do tysięcy losowych osób i powtarzali tę 
+samą historię. Korzystali z specjalnego oprogramowania, aby numer, z którego dzwonili, zawsze miał ten 
+sam kierunkowy co ofiary, sprawiając, że numer telefonu wydawał się lokalny i bardziej godny zaufania. 
+ 
+Ci przestępcy używają także innych historii - od twierdzenia, że twoja gwarancja wygasła, po udzielanie 
+darmowych pożyczek czy naprawianie zainfekowanego komputera. Często próbują uzyskać informacje o 
+twojej karcie kredytowej lub hasłach, oszukać cię, aby przelać im pieniądze lub nawet pozwolić im zdalnie 
+łączyć się z komputerem. 
+ 
+Ci oszuści często tworzą poczucie naglącej sytuacji lub obiecują coś, co wydaje się zbyt piękne, by było 
+prawdziwe, tylko po to aby cię oszukać. Atakujący próbują zmusić cię do popełnienia błędu. Mogli również 
+zdobyć wcześniej informacje o tobie, które wyk orzystają do uwiarygodnienia się. Ostatnio, dzięki 
+dynamicznemu rozwojowi sztucznej inteligencji, oszuści mogą nawet zmieniać swoje głosy podczas 
+rozmów telefonicznych. 
+ 
+Powstrzymaj oszustwa telefoniczne 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Lipiec 2023
+
+© SANS Institute 2023 
+www.sans.org/security-awareness
+Kontratak: Co możesz zrobić 
+ 
+Istnieje kilka kroków, które możesz podjąć, aby się uchronić: 
+ 
+● Skonfiguruj swój telefon tak, aby akceptował połączenia tylko z numerów znajdujących się w 
+twoich Kontaktach lub Książce Adresowej telefonu. Dzięki temu każde połączenie od nieznajomej 
+osoby zostanie przekierowane bezpośrednio na pocztę głosową. Większość oszustów nawet nie 
+zada sobie trudu zostawienia wiadomości głosowej, a jeśli to zrobią, łatwiej jest ustalić, czy to 
+oszustwo. Dodatkowo niektórzy dostawcy usług mają również usługę filtrowania połączeń, którą 
+można włączyć. 
+ 
+● Jeśli rozmawiasz z kimś, kogo nie znasz, bądź ostrożny. Jeśli wywierają na Tobie presję, abyś podjął 
+działanie, najprawdopodobniej to oszustwo. Jeśli mówią, że dzwonią z banku, rozłącz się i 
+zadzwoń do banku korzystając z numeru telefonu widocznego m.in. na karcie pł atniczej lub 
+podanym na strony internetowej banku. Jeśli twierdzą, że dzwonią z urzędu, przejdź na stronę 
+tego urzędu i znajdź numer telefonu, aby oddzwonić. Im dłużej z nimi rozmawiasz, tym większe 
+jest ryzyko, że cię oszukają. 
+ 
+● Nigdy nie podawaj dzwoniącej osobie swoich osobistych lub wrażliwych informacji, które powinny 
+już posiadać. Jeśli dzwoni do Ciebie ktoś z banku, powinni już znać twoje imię, adres i numer konta. 
+ 
+Współcześni oszuści są niezwykle agresywni i podstępni. Nie mają nic do stracenia, a wszystko do 
+zdobycia. Skonfiguruj swój telefon tak, aby odbierać tylko połączenia od osób, które znasz i ufasz, a w 
+przypadku wątpliwości, rozłącz się! 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Prajakta Jagdale jest Dyrektorem ds. Bezpieczeństwa Obronności i Dowodzenia 
+Incydentalnego w Palo Alto Networks. Pełni funkcję członka Zarządu Women in 
+CyberSecurity. Pasjonuje się wszystkim, co związane z bezpieczeństwem. Linkedin: 
+https://www.linkedin.com/in/prajaktajagdale/. 
+ 
+Źródła 
+Działania na emocjach - o tym jak cyberprzestępcy oszukują: https://www.sans.org/newsletters/ouch/emotional-
+triggers-how-cyber-attackers-trick-you/ 
+ 
+Zezwalaj tylko na połączenia od kontaktów 
+ 
+Android: https://support.google.com/fi/answer/12982560?hl=en&co=GENIE.Platform%3DAndroid# 
+Apple: https://support.apple.com/pl-pl/guide/iphone/iphe4b3f7823/ios 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

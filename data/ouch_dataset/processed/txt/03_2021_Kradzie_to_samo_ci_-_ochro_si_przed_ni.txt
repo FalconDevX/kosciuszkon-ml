@@ -1,0 +1,93 @@
+© SANS Institute 2021 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Czym jest kradzież tożsamości? 
+Kradzież tożsamości to sytuacja, w której przestępca pozyskuje informacje o Tobie i wykorzystuje je w 
+niepożądany sposób, na przykład występując o zasiłek dla bezrobotnych, zwrot podatku, nową pożyczkę 
+lub kartę kredytową. Jeśli nie podejmiesz środków ostrożności, może się okazać, że będziesz musiał płacić 
+za produkty i usługi, z których nigdy nie skorzystałeś. 
+ 
+Twoje dane osobowe znajdują się w wielu miejscach w całym internecie. Za każdym razem, gdy 
+przeglądasz strony internetowe, robisz zakupy online, oglądasz filmy lub używasz aplikacji na smartfonie, 
+zbierane są informacje o Tobie. Informacje te są często legalnie sprzedawane lub udostępniane innym 
+firmom. Nawet jeśli tylko jedna z tych firm zostanie zhakowana, przestępcy mogą uzyskać dostęp do 
+Twoich danych osobowych. Załóż, że niektóre informacje na Twój temat są już dostępne dla przestępców 
+i zastanów się, co możesz zrobić, aby wykryć wykorzystanie Twoich danych w oszustwie. 
+ 
+Jak to wykryć 
+● Regularnie sprawdzaj swoje konta i karty bankowe pod kątem wsz elkich płatności, których nie 
+dokonałeś. Łatwym sposobem jest rzetelne sprawdzanie otrzymywanych powiadomień w aplikacji 
+lub powiadomień SMS, dotyczących płatności i innych transakcji. Monitoruj je pod kątem oszustw. 
+● Zbadaj sytuacje, w których sprzedawcy odrzucają Twoje karty kredytowe lub debetowe. Zastanów 
+się, czy nie otrzymałeś ostatnio żadnych listów lub telefonów od windykatorów w sprawie 
+zaległych płatności za karty kredytowe, rachunki medyczne lub pożyczki, które nie należą do 
+Ciebie. 
+● Zwróć uwagę na pisma, które informują o wnioskach o zasiłki rządowe, o które nigdy się nie 
+ubiegałeś. 
+● Jeśli masz możliwość, przejrzyj swoją historię kredytową przynajmniej raz w roku. W Polsce 
+możesz pobrać raport z Biura Informacji Kredytowej. 
+ 
+Co zrobić, gdy to się już stanie 
+● Skontaktuj się z organizacją zaangażowaną w oszustwo. Na przykład, jeśli przestępca otworzył 
+kartę kredytową na Twoje nazwisko, zadzwoń do firmy obsługującej karty kredytowe, aby 
+powiadomić ją o oszustwie. Jeśli ktoś złożył wniosek o zwrot podatku lub zasiłek w Twoim imieniu, 
+skontaktuj się z odpowiednią organizacją rządową. 
+Kradzież tożsamości - ochroń się przed nią 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Marzec 2021
+
+© SANS Institute 2021 
+www.sans.org/security-awareness
+● Zgłoś sprawę organom ścigania i powiadom ich o popełnionym przestępstwie. Możesz zrobić to online. 
+Zgłoszenie możesz wysłać przez poniższy formularz policja.pl/pol/form/dodaj153,dok.html. Postępuj 
+zgodnie z instrukcjami wyświetlanymi na stronie. 
+● Działając w temacie oszustwa, przechowuj wszystkie dokumenty z nim związane, na wypadek, 
+gdyby te dane były potrzebne później. 
+● Powiadom swoją firmę ub ezpieczeniową; być może jedna z polis obejmuje ochronę przed 
+kradzieżą tożsamości. 
+ 
+Jak się przed tym bronić 
+Oto kilka prostych kroków, które możesz podjąć, aby zmniejszyć ryzyko kradzieży tożsamości: 
+● Ogranicz ilość udostępnianych o sobie informacji w witrynach internetowych. 
+● Używaj unikalnego silnego hasła do wszystkich swoich kont online i włącz uwierzytelnianie 
+dwuskładnikowe jako dodatkową ochronę dla najważniejszych kont. 
+● Jeśli to możliwe, ogranicz, kto może uzyskać dostęp do Twojej historii kredytowej . W niektórych 
+krajach można zamrozić swoją zdolność kredytową, aby każdy, kto próbuje uzyskać kartę 
+kredytową lub pożyczkę na Twoje nazwisko, musiał najpierw tymczasowo ją odmrozić. 
+● Zastanów się nad ubezpieczeniem, który obejmuje koszty związane z kradzieżą tożsamości. 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Lenny Zeltser zajmuje się bezpieczeństwem w firmie Axonius. Prowadzi wykłady poświęcone 
+walce ze złośliwym oprogramowaniem w Instytucie SANS. Lenny jest dostępny na Twitterze 
+jako @lennyzeltser oraz prowadzi blog poświęcony bezpieczeństwu zeltser.com. 
+ 
+ 
+ 
+Źródła 
+ 
+Ataki socjotechniczne:https://www.sans.org/security-awareness-training/resources/social-engineering-
+attacks 
+Tworzenie haseł w prostszy sposób: https://www.sans.org/security-awareness-
+training/resources/making-passwords-simple 
+Raport Identity Theft: https://www.identitytheft.gov 
+Credit Freezes: https://krebsonsecurity.com/2018/09/credit-freezes-are-free-let-the-ice-age-begin/ 
+Kradzież tożsamości: https://zeltser.com/unemployment-fraud-and-identity-theft/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+OUCH! powstaje w ramach programu "Security Awareness" Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license. 
+Powielanie treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia 
+kopiowanych treści oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, 
+Princess Young

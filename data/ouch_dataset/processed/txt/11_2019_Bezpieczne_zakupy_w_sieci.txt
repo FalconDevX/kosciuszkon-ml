@@ -1,0 +1,71 @@
+Bezpieczne zakupy w sieci 
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Listopad 2019
+www.sans.org/security-awareness
+Wstęp 
+Okres świąteczny coraz bliżej, dla milionów ludzi wkrótce rozpocznie się czas poszukiwania idealnych prezentów. Wielu z 
+nas kupuje prezenty za pośrednictwem internetu, ze względu na świetne promocje, a także żeby uniknąć tłumów. Niestety 
+cyberprzestępcy również nie próżnują, tworzą fałszywe sklepy internetowe i używają innych technik do oszukiwania ludzi. W 
+niniejszym newsletterze przybliżony zostanie bezpieczny sposób korzystania z sklepów internetowych.
+Fałszywe sklepy
+Cyberprzestępcy tworzą całe fałszywe strony internetowe, podszywające się pod i przypominające prawdziwe strony sklepów 
+lub znanych marek. W trakcie poszukiwania najlepszych ofert, możemy natknąć się na tak spreparowane strony. Kupując na 
+takiej stronie możemy dostać podróbkę, skradziony towar lub w najgorszym przypadku w ogóle nie otrzymać zamawianego 
+produktu. Jak uchronić się przed fałszywymi sklepami:
+ 
+Starajmy się kupować w sklepach internetowych które już znamy, ufamy im i kupowaliśmy w nich wcześniej. 
+Dodawajmy do zakładek strony sklepów które odwiedziliśmy i zrobiliśmy w nich szczęśliwie zakupy. 
+Zwracajmy uwagę na ceny, które są zdecydowanie korzystniejsze niż w ugruntowanych na rynku sklepach. Jeśli 
+coś brzmi zbyt pięknie by mogło być prawdziwe to najprawdopodobniej nie jest. 
+ 
+Bądźmy podejrzliwi, jeśli strona łudząco przypomina już wcześniej przez nas odwiedzaną, ale nazwa domeny 
+lub sklepu trochę się różni. Jeśli zazwyczaj robiliśmy zakupy na stronie Amazona pod adresem www.amazon.
+com to fałszywa strona będzie próbowała wykorzystać nasze przeoczenie i przekieruje nas pod fałszywą stronę 
+z podobnym URL z tym, że litery “O” zostaną zastąpione przez “0”. 
+Wpisujmy nazwę odwiedzanego sklepu w wyszukiwarkę internetową i sprawdźmy czy przy nazwie w wynikach 
+nie znajdują się hasła takie jak: “fraud”, “oszustwo”, “scam”, “nigdy więcej”, “fałszywy”. 
+ 
+Używajmy niepowtarzalnych haseł do każdego konta w sklepie internetowym. Jeśli mamy problem z 
+zapamiętywaniem wielu haseł powinniśmy rozważyć używanie menedżera haseł.
+
+OUCH! | February, 2018
+Źródła
+Inżynieria społeczna: http://www.sans.org/u/X7k
+Oszustwa za pośrednictwem mediów społecznościowych: http://www.sans.org/u/X7p
+Tworzenie haseł w prostszy sposób: http://www.sans.org/u/Xu9
+Oszuści na autentycznych stronach
+Zachowajmy czujność również na zaufanych stronach. Nawet duże sklepy internetowe oferują produkty sprzedawane przez 
+różne osoby i przedsiębiorstwa, które mogą mieć nieuczciwe intencje. W końcu sklepy internetowe przypominają prawdziwy 
+rynek, w związku z tym część sprzedawców może być niegodna zaufania. Starajmy się sprawdzić opinię o sprzedawcy zanim 
+zdecydujemy się na zakup. Strzeżmy się sprzedawców, którzy są nowymi użytkownikami i mają przy tym nadzwyczaj niskie ceny. 
+Zapoznajmy się uważnie z polityką sklepu dotyczącą zakupów od tego rodzaju osób trzecich. Jeśli mamy wątpliwości, kupujmy 
+przedmioty wystawione bezpośrednio przez sklep internetowy, nie natomiast osobę trzecią która jest użytkownikiem sklepu.
+Zakupy i płatność Online 
+Sprawdzajmy regularnie wyciągi z konta bankowego, żeby dostrzec podejrzane transakcje. Jeśli możemy korzystajmy 
+z powiadomień: mailowych, sms lub w aplikacji, za każdym razem kiedy nasze konto zostanie obciążone. Jeśli zauważymy 
+podejrzaną aktywność powinniśmy od razu zadzwonić do naszego banku i to zgłosić. Należy unikać używania karty debetowej 
+ponieważ pieniądze są pobierane bezpośrednio z twojego konta przez co utrudnione będzie odzyskanie pieniędzy w przypadku 
+oszustwa. Kolejną możliwością jest korzystanie ze znanych internetowych usług płatniczych takich jak PayPal, który nie żąda 
+podania sprzedawcy numeru twojej karty kredytowej. Ponadto należy rozważyć używanie kart podarunkowych podczas zakupów 
+w internecie. 
+Dobrze zaprojektowana i przyzwoicie wyglądająca strona sklepu internetowego wcale nie gwarantuje jej autentyczności. 
+Powinniśmy unikać stron na których nie czujemy się pewnie. Czasami lepiej wrócić do znanego nam sklepu, nawet jeśli jego 
+oferta nie jest tak korzystna, gwarantuje on natomiast autentyczność produktu. Ceną pokuszenia się na nadzwyczajną promocję 
+może być ryzyko zostania oszukanym.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK, powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi zespołami 
+na całym świecie.
+WWW: http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+Biuletyn OUCH! powstaje w ramach programu „Security Awareness” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license . 
+Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. Editorial Board: Walt Scrivens, 
+Phil Hoffman, Alan Waggoner, Cheryl Conley | Polski przekład (NASK/CERT Polska): Bartłomiej Wnuk, Konrad Purzycki, Janusz Urbanowicz
+www.sans.org/security-awareness
+© SANS Institute 2019
+Lenny Zeltser jest managerem ds. bezpieczeństwa informacji w Axonious oraz starszym instruktorem 
+i autorem materiałów szkoleniowych w SANS Institute. Można się z nim skontaktować i obserwować 
+go na Twitterze: @lennyzeltser i jego blogu zeltser.com.
+Redaktor wydania

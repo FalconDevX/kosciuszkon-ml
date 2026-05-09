@@ -1,0 +1,6 @@
+beautifulsoup4
+chromadb
+pypdf
+psycopg[binary]
+requests
+sentence-transformers

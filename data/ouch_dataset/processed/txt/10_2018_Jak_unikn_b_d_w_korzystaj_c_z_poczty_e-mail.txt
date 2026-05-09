@@ -1,0 +1,72 @@
+Wprowadzenie
+Poczta e-mail stanowi obecnie jeden z najbardziej popularnych środków komunikacji, zarówno w życiu prywatnym, jak i 
+zawodowym. Korzystając z poczty elektronicznej, warto mieć świadomość błędów, jakie możemy popełnić. Poniżej podajemy 
+4 najbardziej popularne rodzaje pomyłek, a także sposoby, pomagające ich uniknąć.
+Autouzupełnianie
+Autouzupełnianie to popularna funkcjonalność, dostępna w większości programów pocztowych. Wystarczy, że wpiszesz 
+imię osoby, do której adresowana jest wiadomość, a program pocztowy sam uzupełni pole z adresem e-mail. Dzięki 
+temu, nie musisz zapamiętywać adresów wszystkich swoich znajomych, wystarczy znajomość imienia. Problem 
+pojawia się, kiedy w Twojej książce adresowej znajdzie się wiele kontaktów do osób o tym samym imieniu. Łatwo 
+wtedy o popełnienie błędu i wysłanie wiadomości do niewłaściwej osoby. Wyobraź sobie sytuację, w której chcesz 
+zaadresować ważną wiadomość służbową do “Joanny Nowak”, księgowej z Twojej firmy. W wyniku pomyłki, korzystając 
+z opcji autouzupełniania, wybierasz z listy “Joannę Nowacką”, wychowawczynię Twojej córki. W wyniku błędu, poufna 
+wiadomość służbowa trafia do niewłaściwego adresata. Chcąc chronić się przed tego typu błędami, zawsze sprawdź 
+dwa razy imię, nazwisko i adres odbiorcy.
+Odpowiedz wszystkim
+Tworząc wiadomość e-mail, posiadasz możliwość przekazania jej kopii adresatom z pola „CC:”. W wolnym tłumaczeniu 
+„CC:” oznacza kalkę (ang. „Carbon Copy”). Daje ona możliwość przesłania e-maila „do wiadomości” innych osób (w 
+polskojęzycznych aplikacjach możesz spotkać się z polem o nazwie „DW:”). Otrzymując wiadomość z listą adresatów w 
+polu “CC:”, możesz zdecydować, czy chcesz odpisać wyłącznie nadawcy, czy skorzystać z opcji „odpowiedz wszystkim” 
+i wysłać kopię wiadomości także do pozostałych osób. Jeśli Twoja odpowiedź zawiera „dane wrażliwe”, prawdopodobnie 
+będziesz chciał skierować ją wyłącznie do nadawcy. Bądź ostrożny, korzystając z opcji „Odpowiedz”. Bardzo łatwo 
+o omyłkowe kliknięcie przycisku „Odpowiedz wszystkim”, co skutkuje zaadresowaniem wiadomości do wszystkich 
+osób wymienionych w polach adresowych. Podsumowując: zawsze, gdy wysyłasz lub odpowiadasz na wiadomości 
+„wrażliwe”, przed kliknięciem przycisku „Wyślij”, sprawdź dwa razy, kto jest ich odbiorcą.
+Jak uniknąć błędów, 
+korzystając z poczty e-mail?
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Październik 2018
+www.sans.org/security-awareness
+
+OUCH! | February, 2018
+Przydatne linki
+Zatrzymaj phishing: https://www.sans.org/u/IJj
+Socjotechnika: https://www.sans.org/u/IJo
+Zarządzanie autouzupełnianiem:
+Windows Mac
+Emocje
+Unikaj wysyłania e-maili, kiedy jesteś zdenerwowany. Taka wiadomość może działać na Twoją szkodę, kosztując Cię 
+nawet utratę pracy lub przyjaźni. W zamian, możesz poświęcić krótką chwilę, aby spokojnie „zebrać myśli”. Jeżeli 
+potrzebujesz uspokoić swoje emocje, utwórz nową wiadomość (upewnij się, że pole adresowe jest puste) i napisz 
+dokładnie to, co czujesz. Następnie, zrób krótką przerwę, odchodząc od komputera. Być może dobrym rozwiązaniem 
+będzie kawa albo spacer. Kiedy wrócisz, skasuj wiadomość i napisz ją jeszcze raz. Czasami, jeżeli sytuacja na to 
+pozwala, lepszym rozwiązaniem będzie zatelefonowanie do nadawcy lub spotkanie się z nim osobiście. Elektroniczne 
+formy komunikacji nie zawsze pozwalają drugiej stronie właściwie określić Twój nastrój. Jeżeli pisząc wiadomość 
+posługujesz się żartem, pamiętaj że poczta e-mail ma swoje ograniczenia i Twój adresat może nie zinterpretować 
+właściwie tego, co miałeś na myśli.
+Prywatność
+Warto pamiętać, że poczta e-mail nie zawsze służy ochronie prywatności. Twoja wiadomość może być odczytana 
+przez każdego, kto uzyska do niej dostęp (podobnie jak w przypadku pocztówki przesyłanej tradycyjną pocztą). Twój 
+e-mail może być łatwo przesłany dalej, opublikowany na publicznym forum, ujawniony w przypadku nakazu sądowego, 
+lub upubliczniony w konsekwencji włamania na serwer. Jeżeli chcesz przekazać coś naprawdę osobistego, chwyć 
+za słuchawkę i po prostu wykonaj telefon. Warto pamiętać, że w wielu krajach, e-mail może służyć jako dowód w 
+postępowaniu sądowym. Na koniec, warto wspomnieć o sytuacji w której wykorzystujesz Twój służbowy komputer do 
+przesyłania poczty: pamiętaj, że Twój pracodawca może posiadać prawo monitorowania, a czasami także wglądu do 
+Twojej korespondencji.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK, powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi zespołami 
+na całym świecie.
+WWW: http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+Biuletyn OUCH! powstaje w ramach programu „Security Awareness” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license . 
+Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. Editorial Board: Walt Scrivens, 
+Phil Hoffman, Cathy Click, Cheryl Conley | Polski przekład (NASK/CERT Polska): Sebastian Kondraszuk, Michał Strzelczyk, Jacek Sikorski
+www.sans.org/security-awareness
+© SANS Institute 2018
+Keith Palmgren jest specjalistą ds. bezpieczeństwa z 30 letnim doświadczeniem w branży.
+Dyrektor generalny NetIP , Inc. oraz autor 5-dniowego kursu SANS SEC301 - „Wprowadzenie do 
+Cyberbezpieczeństwa”. https://sans.org/sec301.
+Redaktor Gościnny

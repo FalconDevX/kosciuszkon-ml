@@ -1,0 +1,103 @@
+©SANS Institute 2025 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Warte zapamiętania: Przykład Lisy 
+Lisa, przyjazna i odnosząca sukcesy zawodowe menadżerka, wiodła szczęśliwe życie. Jednak w momencie, kiedy 
+praca zabierała większość jej czasu, poczuła się coraz bardziej odizolowana i zaczęła korzystać z mediów 
+społecznościowych, aby nawiązać kontakt z nowymi osobami. To wtedy poznała w Internecie „Ryana”, który szybko 
+stał się jej przyjacielem, choć tylko wirtualnym, bo mieszkał na drugim końcu świata. Wydawał się troskliwy, miał 
+takie same zainteresowania jak Lisa, kochał podróże, gotowanie i inwestowani e pieniędzy ma giełdzie. 
+Po kilku miesiącach znajomości, Ryan zasugerował Lisie zainwestowanie pieniędzy na platformie, której sam używa 
+w celu wzbogacenia się. Lisie wydawało się to dobrą okazją i zaczęła inwestycję od niewielkiej kwoty. Widząc, że 
+zainwestowane pieniądze przynos zą zyski, zaczęła inwestować więcej pieniędzy. Po sześciu miesiącach znajomości 
+ze swoim przyjacielem w końcu próbowała wypłacić zarobione pieniądze, jednak platforma „zamroziła” jej konto, a 
+Ryan zniknął. Lisa odkryła, że straciła ponad 175 000 dolarów w wyniku oszustwa znanego jako „romantyczna 
+przynęta. " Strata finansowa była druzgocąca, ale zdrada emocjonalna bolała jeszcze bardziej. 
+Czym jest romantyczna przynęta? 
+„Romantyczna przynęta” to wyszukane oszustwo, które łączy w sobie oszustwo matrymonialne i wyłudzenie 
+pieniędzy. Składa się z kilku przewidywalnych kroków, chociaż szczegóły mogą się różnić: 
+1. Nawiązanie kontaktu: Oszust kontaktuje się z ofiarą, często za pośrednictwem komunikatorów lub mediów 
+społecznościowych, przesyłając zwykłe wiadomości lub komplementy. 
+2. Budowanie relacji: Z biegiem czasu oszust buduje zaufanie. Dzieli się osobistymi historiami, angażuje się w 
+regularne rozmowy i często stara się zbudować relacje emocjonalną, aby wzmocnić więź. 
+3. Przedstawianie możliwości inwestycyjnych : Po zbudowaniu zaufania oszust wspomina o bezpiecznej i 
+dochodowej inwestycji. Rozmówca może przekonywać, że ma wiedzę o platformie, na której odniósł 
+ogromny sukces i zarobił dużo pieniędzy. 
+4. Zachęcanie do małych inwestycji : Oszust zachęca ofiarę do zainwestowania niewielkiej sumy pieniędzy. 
+Początkowo ofiara widzi duże zyski z małych wpłat. W rzeczywistości są to jedynie wizualizacje, które oszust 
+wykorzystuje do budowania wiarygodności. Oszuści obsługujący platformę do rze komego inwestowania 
+mogą na początkowym etapie pozwalać na niewielkie wypłaty uzyskanych zysków. Ma to uwiarygodnić cały 
+proceder. 
+5. Zwiększanie stawek : Gdy ofiara widzi zyski, oszust namawia ją do większych inwestycji, kierując się 
+poczuciem pilności: „Działaj teraz, bo inaczej stracisz szansę!” 
+6. Odcięcie: Kiedy oszust wyłudził tyle pieniędzy, ile tylko ofiara była w stanie wpłacić, konto na platformie 
+zostaje zablokowane, a kontakt się urywa. Platforma staje się niedostępna, a ofiara pozostaje z niczym. 
+ 
+ 
+ 
+ 
+Miła rozmowa i pusty portfel: Oszustwa romantyczne 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Luty 2025
+
+©SANS Institute 2025 
+www.sans.org/security-awareness
+Najważniejsze sygnały ostrzegawcze umożliwiające wykrywanie oszustw związanych z romantyczną 
+przynętą. 
+1. Coś jest zbyt piękne, aby mogło być prawdziwe : Uważaj na każdego, kto obiecuje gwarantowane zwroty 
+lub twierdzi, że nie wiąże się to z żadnym ryzykiem. Prawdziwe inwestycje zawsze niosą ze sobą pewne 
+ryzyko, a szybkie i stałe zyski są często sygnałem ostrzegawczym. 
+2. Nieoczekiwany kontakt : Zachowaj ostrożność w przypadku nieznajomych osób, które nawiązują kontakt 
+bez wyraźnego powodu. Czy kiedykolwiek otrzymałeś losową wiadomość tekstową „Cześć” od 
+nieznajomego i zastanawiałeś się, o co chodziło? To mógł być początek oszustwa. Jeśli nie wi esz, kim jest 
+nadawca takiej wiadomości, nie odpowiadaj na nią i zablokuj nadawcę. 
+3. Relacja z poznaną osobą szybko przechodzi w sferę finansową : Jeśli ktoś, kogo niedawno poznałeś w 
+Internecie, zacznie rozmawiać o inwestycjach lub sprawach finansowych, potraktuj to jako sygnał 
+ostrzegawczy. Oszuści łączą relacje z finansami, aby manipulować zaufaniem. 
+4. Presja szybkiego inwestowania : Oszuści często wywierają presję, aby nakłonić ofiary do szybkiego 
+zainwestowania dużych kwot. Mogą twierdzić, że czas, aby wykorzystać okazję się kończy. 
+5. Fałszywe platformy inwestycyjne : Wielu oszustów korzysta z fałszywych witryn lub aplikacji 
+inwestycyjnych, które wyglądają na prawdziwe. Zachowaj ostrożność w przypadku każdej platformy, która 
+nie jest polecana przez ekspertów i doradców finansowych. 
+6. Trudności z wypłatą środków : Ostatnią czerwoną flagą jest nieudana próba wypłaty środków, opóźnienia 
+w wypłacie i próba wyłudzenia pieniędzy w celu wypłaty swoich zysków. Każda legalna platforma 
+inwestycyjna powinna umożliwiać dostęp do środków bez przeszkód. 
+ 
+Jak się chronić 
+Oszuści stojący za tymi schematami to wykwalifikowani manipulatorzy. Jesteś swoją najlepszą obroną. 
+● Ostrożność: Kiedy nieznajomi nawiązują z Tobą kontakt, bądź uważny. Ponadto im lepszą okazje 
+przedstawia rozmówca i im większą presję wywiera, tym większe prawdopodobieństwo, że jest to 
+oszustwo. 
+● Weryfikacja: Używaj znanych platform inwestycyjnych i unikaj platform o niewiadomym pochodzeniu i 
+szczątkowych informacjach regulacyjnych. 
+● Ochrona danych osobowych: Nie udostępniaj w Internecie zbyt wielu informacji o swoich finansach i życiu 
+osobistym, szczególnie osobom, których nigdy nie spotkałeś osobiście. 
+Redaktor gościnny 
+Karen Neman jest liderem ds. bezpieczeństwa handlowego AWS Professional Services i prezesem WiCyS 
+w Ontario. Interesują ją zmiany w podejściu do cyberbezpieczeństwa i używanie różnorodnych 
+sposobów myślenia, działania i narzędzi. https://www.linkedin.com/in/karenbnemani/ 
+ 
+Źródła 
+ 
+Wyzwalacze emocjonalne: jak atakujący oszukują: https://www.sans.org/newsletters/ouch/emotional-triggers-how-cyber-
+attackers-trick-you/ 
+Nie pozwól, aby cyberprzestępcy ukradli Twoje oszczędności: https://www.sans.org/newsletters/ouch/dont-let-
+cybercriminals-swipe-your-savings-lock-down-your-financial-accounts/ 
+Chroń swoje serce i portfel przed przynętą romantyczną: https://www.sans.org/newsletters/ouch/guard-your-heart-wallet-
+against-romance-scams/ 
+ 
+Polski przekład CERT Polska: Aleksandra Węgrzynowicz, Bartłomiej Wnuk 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzeni a kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

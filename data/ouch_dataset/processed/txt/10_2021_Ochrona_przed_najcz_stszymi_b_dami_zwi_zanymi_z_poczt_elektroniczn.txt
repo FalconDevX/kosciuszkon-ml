@@ -1,0 +1,102 @@
+`` © SANS Institute 2021 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Poczta elektroniczna jest nadal jednym z głównych sposobów komunikowania się, zarówno w życiu 
+osobistym, jak i zawodowym. Korzystając z poczty elektronicznej, warto mieć świadomość błędów, jakie 
+możemy popełnić. Poniżej przedstawiamy najczęstsze błędy pope łniane podczas korzystania z poczty e -
+mail, a także sposoby pomagające ich uniknąć. 
+ 
+Autouzupełnianie 
+Autouzupełnianie jest powszechną funkcją większości klientów e -poczty. Podczas wpisywania nazwy 
+osoby, do której chcesz wysłać wiadomość, oprogramowanie poczty automatycznie wybiera jej adres e -
+mail. Wystarczy, że wpiszesz imię osoby, do której adresowana jest wiadomość, a program pocztowy sam 
+uzupełni pole z adresem e -mail. Problem pojawia się, kiedy w książce adresowej jest kilka osób o 
+podobnych nazwach, uzupełniony może zostać wtedy niewłaściwy adres e -mail. Na przykład możesz 
+chcieć wysłać poufną wiadomość e-mail do „Jana Nowak” - swojego współpracownika, ale zamiast tego 
+autouzupełnianie wybiera adres e -mail do „Janusza Nowakowskiego” - trenera koszykówki Twojego 
+dziecka. W efekcie możesz wysłać ważną wiadomość do kogoś, kogo ledwo znasz. Zawsze dokła dnie 
+sprawdzaj imię i nazwisko oraz adres e-mail w każdej wiadomości e-mail zanim ją wyślesz. Inną opcją jest 
+dodanie adresu e -mail odbiorcy po napisaniu wiadomości, upewniając się, że wybrałeś odpowiednią 
+osobę. 
+ 
+Odpowiedz wszystkim 
+W większości klientów pocztowych e -mail, podczas wysyłania wiadomość, oprócz pola "Do", istnieje 
+również opcja "DW". "DW" (ang. "CC"). to skrót od "Do Wszystkich" (ang. "Carbon Copy"), który umożliwia 
+dodawanie dodatkowych osób do odbiorców Twojej wiadomości. Kiedy ktoś inny wyśle Ci wiadomość i w 
+DW są dodatkowe adresy e-mail, musisz zdecydować, jak chcesz odpowiedzieć: tylko do nadawcy lub do 
+wszystkich, którzy zostali uwzględnieni w wiadomości e -mail za pośrednictwem opcji Odpowiedz 
+Wszystkim. Jeśli Twoja odpowiedź jest poufna, najprawdopodobniej chcesz odpowiedzieć tylko nadawcy. 
+Uważaj jednak, ponieważ bardzo łatwo jest omyłkowo nacisnąć „Odpowiedz wszystkim”, co oznacza, że 
+wiadomość zobaczą wszystkie osoby uwzględnione w DW. Podsumowując, odpowiadając na poufnego e-
+maila, zawsze dokładnie sprawdzaj, do kogo wysyłasz wiadomość przed wciśnięciem przycisku Wyślij. 
+ 
+Emocje 
+Unikaj wysyłania wiadomości e-maili, gdy jesteś zdenerwowany. Taka wiadomość może działać na Twoją 
+szkodę, kosztując Cię nawet utratę pracy lub przyjaźni. Zamiast tego poświęć chwilę i spokojnie uporządkuj 
+swoje myśli. Jeśli chcesz dać upust swojej frustracji, utwórz nową wiadomość e-mail (upewnij się, że pole 
+adresowe "Do" jest puste) i wpisz dokładnie to, co chcesz powiedzieć. Następni e wstań i odejdź od 
+komputera, zrób sobie kawę lub idź na spacer. 
+Ochrona przed najczęstszymi błędami związanymi z 
+pocztą elektroniczną 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Październik 2021
+
+`` © SANS Institute 2021 
+www.sans.org/security-awareness
+Kiedy wrócisz, usuń wiadomość i zacznij od nowa. Pomocne może być, jeśli pokażesz swoją wiadomość 
+przed wysłaniem przyjacielowi lub współpracownikowi. Jednak najlepszym rozwiązaniem - kiedy już się 
+uspokoisz - będzie rozmowa telefoniczna lub twarzą w twarz z daną osobą. Ludzie mogą mieć problem z 
+określeniem Twoich zamiarów za pomocą samego e -maila, więc Twoja wiadomość może brzmieć lepiej 
+przez telefon lub osobiście. Pamiętaj, że po wysłaniu e-maila, ślad po nim zostaje na zawsze. 
+ 
+Prywatność 
+Poczta elektroniczna nie ma odpowiednich mechanizmów chroniących prywatność. Twój e -mail może 
+przeczytać każdy, kto uzyska do niego dostęp (podobnie jak pocztówka którą wysyłasz z wakacji). Twoją 
+wiadomość można łatwo przekazać innym, opublikować na forach, przekazać w wyniku nakazu sądowego 
+lub rozpowszechnić po ataku hakerskim. Jeśli masz komuś coś naprawdę prywatnego do powiedzenia, 
+podnieś słuchawkę i zadzwoń. Jeśli używasz komputera służbowego do wysyłania wiadomości e -mail, 
+pamiętaj, że Twój pracodawc a może mieć prawo do monitorowania, a być może nawet odczytywania 
+wiadomości e-mail podczas korzystania z zasobów pracy. 
+ 
+Załączniki 
+Jeśli dołączasz dokumenty do wiadomości, przed wysłaniem upewnij się, że załączyłeś właściwy plik. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Steffanie AK Schilling to specjalistka w dziedzinie cyberbezpieczeństwa, wywodząca się z nauk społecznych. 
+Uhonorowana jako „Innowator i twórca różnic w cyberprzestrzeni”, jest członkiem ShareTheMicInCyber, 
+a obecnie pełni funkcję najmłodszego wiceprezesa Infragard - Northern Ohio. Jest cenionym ekspertem na 
+temat różnorodności, równości, integracji, sprawiedliwości, edukacji i świadomości na temat 
+bezpieczeństwa. (https://www.linkedin.com/in/steffanieschilling/). 
+ 
+Źródła 
+Ataki socjotechniczne: https://www.sans.org/newsletters/ouch/social-engineering-attacks/ 
+Kradzież tożsamości: https://www.sans.org/newsletters/ouch/identify-theft/ 
+Kariera w cyberbezpieczeństwie: https://www.sans.org/newsletters/ouch/a-career-in-cybersecurity/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! powstaje w ramach programu "Security Awareness" Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license. 
+Powielanie treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia 
+kopiowanych treści oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Wa ggoner, Leslie 
+Ridout, Princess Young.

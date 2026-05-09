@@ -1,0 +1,106 @@
+© SANS Institute 2023 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Wstęp 
+ 
+Organizacje i rządy na całym świecie nieustannie padają ofiarą ataków internetowych. Praktycznie nie ma już 
+dnia bez medialnych doniesień dotyczących cyberbezpieczeństwa. Stąd też ogromne zapotrzebowanie na 
+osoby wyszkolone w zakresie bezpieczeństwa teleinformatycznego, które będą w stanie ochronić nas przed 
+wzrastającym zagrożeniem. Czy rozważałeś już karierę jako specj alista cyberbezpieczeństwa? Jest to szybko 
+rozwijająca się i dynamiczna branża z dużą ilością specjalizacji do wyboru. Kariera w cyberbezpieczeństwie 
+pozwala na pracę z każdego zakątka świata z atrakcyjnymi świadczeniami pracowniczymi oraz jest pracą, która 
+daje możliwość dokonywania prawdziwych zmian. 
+ 
+Czy konieczne jest wykształcenie w zakresie cyberbezpieczeństwa? 
+ 
+Zdecydowanie nie. Wielu z najlepszych specjalistów ds. bezpieczeństwa ma wykształcenie nietechniczne - od 
+filozofii, historii i bibliotekoznawstwa po mechaników samochodowych, techników dentystycznych. 
+Najbardziej ekscytującą rzeczą w tej branży jest to, ż e nauczysz się jak działają różne technologie również dla 
+własnych potrzeb i usprawnienia we własnym domu. 
+ 
+Jak zacząć 
+ 
+Cyberbezpieczeństwo nie polega na włamywaniu się do systemów. Cyberbezpieczeństwo polega na uczeniu się 
+i poznawaniu jak działają różne rzeczy. Gdy zrozumiesz, jak działają technologie i współdziałają ze sobą, 
+zaczniesz identyfikować słabe punkty, które na leży zabezpieczyć. Nie wiesz od czego zacząć? Zacznij od 
+poznania wielu obszarów cyberbezpieczeństwa, a następnie zobacz, co Cię interesuje. 
+ 
+● Programowanie: naucz się podstaw programowania. Najlepiej zacznij od Pythona, HTML lub 
+JavaScript. Jeśli nie jesteś pewien od czego zacząć rozważ internetowe kursy lub przeczytaj jedną z 
+wielu dostępnych książek o programowaniu. To na prawdę nie jest trudne! 
+● Systemy operacyjne: Naucz się podstaw administrowania systemami operacyjnymi Linux i Windows. 
+Jeśli chcesz stać się prawdziwym pasjonatem zacznij od Linuksa. Umiejętność administrowania Linuksa 
+z pozycji konsoli daje olbrzymie możliwości. Naucz się wpisywać polecenia, a nie klikać ikony. 
+● Aplikacje: Naucz się konfigurowania, uruchamiania oraz utrzymania takich aplikacji jak serwer WWW 
+czy DNS. 
+● Sieci komputerowe : Poznaj zasady działania sieci komputerowych, przechwytuj i analizuj ruch 
+sieciowy żeby zrozumieć jak działa komunikacja pomiędzy różnymi urządzeniami. Może to być fajna 
+zabawa, zwłaszcza jeśli masz do niej podłączone rozmaite urządzenia. 
+● Usługi chmurowe: Poznaj jak działają usługi chmurowe oraz jak można z nich korzystać. 
+ 
+Rozpocznij karierę w cyberbezpieczeństwie 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Kwiecień 2024
+
+© SANS Institute 2023 
+www.sans.org/security-awareness
+Konfiguracja domowego laboratorium 
+ 
+Świetnym sposobem na rozpoczęcie nauki jest skonfigurowanie laboratorium w domu, aby móc rozpocząć 
+interakcję i odkrywać, jak działają różne technologie. Jest to całkiem proste, dzięki wykorzystaniu wirtualizacji 
+możesz stworzyć wiele wirtualnych urządzeń w jednym komputerze. Możesz również skorzystać z chmury 
+obliczeniowej takiej jak Amazon AWS czy Microsoft Azure. Najlepszą częścią laboratorium jest możliwość 
+bezkarnego popełniania błędów. Gdy skończysz, po prostu zmodyfikuj aplikacje lub systemy i zacznij wszystko 
+od nowa. Istnieje nawet termin określający to podejście Fail Fast. Im szybciej zaczniesz dostrzegać popełnione 
+błędy, tym szybciej się uczysz i osiągasz zamierzone cele. Nie ma dobrego czy złego sposobu na rozpoczęcie, po 
+prostu rób to co cię interesuje. 
+ 
+Nawiązywanie kontaktów, uczenie się od innych i rozmawianie z nimi 
+ 
+Inną możliwością jest spotkanie się z osobami ze środowiska cyberbezpieczeństwa. Poproś o kilku minutowe 
+rozmowy, zadawaj pytania i bądź dociekliwy. Pomyśl nad udziałem w jednej z konferencji w twoim otoczeniu 
+(z reguły nazwy konferencji zawierają przyrost ek "con"). Znaną serią spotkań przeznaczonych dla osób 
+początkujących jest wydarzenie z serii Bsides lub SANS New2Cyber. Najtrudniejsze jest znalezienie pierwszego 
+wydarzenia bądź spotkania. Uczestnictwo w wydarzeniach otwiera niezliczoną ilość nowych możl iwości i 
+kontaktów. Kolejnym sposobem jest czerpanie wiedzy z takich źródeł jak filmy na YouTube, fora internetowe, 
+blogi prowadzone przez specjalistów z branży, uczestnictwo w internetowych rywalizacjach typu CTF (Capture 
+The Flag). 
+ 
+Nie pozwól na to aby powstrzymywał cię brak formalnego wykształcenia czy przekonanie o braku 
+doświadczenia zawodowego. To właśnie twoje dotychczasowe doświadczenia z innej branży są unikalną 
+wartością dodaną. Gdy będziesz rozwijać swoje umiejętności i zaczniesz obcować z ludźmi z branży, to 
+możliwości same przyjdą. 
+ 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+ 
+Tara N. Lewis, Ed.D. jest certyfikowaną trenerką pracującą z klientami na początku kariery 
+lub przychodzących z innych branży. Była aktywna w krajowych i lokalnych organizacjach 
+zawodowych tj. WiCys, NACE i TxCEIA, a także była prelegentką w webinariach na krajowych 
+i regionalnych konferencjach oraz publikowała artykuły związane z rozwoj em kariery. 
+ 
+Źródła 
+ 
+SANS Scholarship Academies: https://www.sans.org/cyber-academy/ 
+SANS Summits: https://sans.org/summits 
+Security Besides Conferences: http://www.securitybsides.com/ 
+Women In Cybersecurity: https://www.wicys.org/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzeni a kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

@@ -1,0 +1,72 @@
+Wstęp
+Serwisy społecznościowe takie jak Snapchat, Facebook, Twitter, Instagram czy LinkedIn zadziwiają możliwościami w zakresie 
+poznawania nowych osób, komunikacji i dzielenia się informacjami. Wspomniane korzyści wiążą się jednak z pewnym ryzykiem, 
+nie tylko dla Ciebie, ale także dla Twojej rodziny, przyjaciół, czy pracodawcy. W bieżącym wydaniu biuletynu omówimy kluczowe 
+zasady, które warto stosować, by korzystanie z mediów społecznościowych stawało się bezpieczniejsze.
+Publikowanie
+Bądź ostrożny, zastanów się zanim opublikujesz coś w sieci. Jest wysoce prawdopodobne, że wszystko co umieszczasz 
+w Internecie, stanie się kiedyś dostępne publicznie. Wpływa to na Twój wizerunek oraz przyszłość (m.in. rekrutację 
+do wybranej szkoły czy pracodawcy). Jeżeli nie chcesz, aby Twoja rodzina lub szef zobaczyli coś, czym się dzielisz, 
+prawdopodobnie nie powinieneś tego udostępniać. Zwracaj uwagę na treści publikowane na Twój temat przez inne 
+osoby. Być może będziesz musiał poprosić o usunięcie tego, co zostało udostępnione.
+Prywatność
+Praktycznie wszystkie serwisy społecznościowe posiadają rozwiązania w zakresie zwiększania prywatności. Aktywuj 
+je! Czy odwiedzana strona naprawdę potrzebuje dostępu do Twojej lokalizacji? Niektóre opcje prywatności mogą być 
+mylące i często zmieniane. Miej w zwyczaju weryfikować, czy funkcjonują w sposób jakiego oczekujesz.
+Silne hasło
+Konto w serwisie społecznościowym zabezpiecz niepowtarzalnym
+i odpowiednio długim hasłem. Hasło może składać się z kilku różnych wyrazów. Tobie ułatwi to jego zapamiętanie, a 
+przestępcom utrudni jego odgadnięcie.
+Ogranicz dostęp do konta
+Aktywuj dwuskładnikowe uwierzytelnianie na wszystkich Twoich kontach. Ta funkcjonalność poprosi o jednorazowy kod 
+(np. wysyłany na Twój telefon komórkowy) za każdym razem, kiedy będziesz próbował się zalogować. W ten prosty 
+sposób znacząco poprawisz bezpieczeństwo Twojego konta.
+Oszustwa
+Podobnie jak w przypadku poczty elektronicznej, również w serwisach społecznościowych przestępcy będą próbowali 
+wykorzystywać wiadomości, aby Cię oszukać. Dla przykładu, mogą starać się wyłudzić od Ciebie hasło lub dane karty 
+Bezpieczne Korzystanie z Mediów 
+Społecznościowych - Wskazówki
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Marzec, 2018
+www.sans.org/security-awareness
+
+OUCH! | February, 2018
+Przydatne linki
+Silne hasła: https://www.sans.org/u/B6E
+Dwuskładnikowe uwierzytelnianie:
+ h
+ttps://www.sans.org/u/B6J
+Bezpieczeństwo dzieci online: 
+ h
+ttps://www.sans.org/u/B6O
+Kampania Lock Down Your Login: h
+ttps://www.lockdownyourlogin.org/
+kredytowej. Zwracaj uwagę na to, w co klikasz: jeżeli pisze do Ciebie przyjaciel, a wiadomość wygląda na podejrzaną, 
+lub w inny sposób budzi Twoje wątpliwości, może to być podszywający się pod niego przestępca.
+Warunki świadczenia usług
+Zapoznaj się z warunkami świadczenia usług w używanych serwisach. W niektórych przypadkach wszystko, co 
+publikujesz lub przesyłasz za pośrednictwem serwisu, może stać się jego własnością.
+Praca
+Jeżeli chcesz opublikować cokolwiek na temat Twojej pracy, skonsultuj to najpierw ze swoim przełożonym. Upewnij się, 
+że to co przesyłasz, może być udostępniane publicznie.
+Skorzystaj z powyższych wskazówek, aby zwiększyć swoje bezpieczeństwo. Aby dowiedzieć się więcej, lub zgłosić 
+nieautoryzowane działania, zapoznaj się z zakładką bezpieczeństwo w używanych portalach społecznościowych.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi 
+zespołami na całym świecie.
+WWW: 
+http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+Licencja
+Biuletyn OUCH! powstaje w ramach programu „Securing The Human” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 
+license. Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia 
+kopiowanych treści oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. 
+Editorial Board: Walt Scrivens, Phil Hoffman, Cathy Click, Cheryl Conley | Polski przekład (NASK/CERT Polska): Sebastian Kondraszuk, Michał 
+Strzelczyk, Jacek Sikorski
+www.sans.org/security-awareness© SANS Institute 2018
+Jessica Barker to światowy lider w obszarze tzw. „czynnika ludzkiego w cyberbezpieczeństwie”. 
+Współzałożycielka Redacted Firm, zajmującej się dostarczaniem usług doradczych dla klientów 
+z całego świata, oraz znany prelegent (dostępna na Twitterze jako @drjessicabarker).
+Redaktor Gościnny

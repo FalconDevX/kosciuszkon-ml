@@ -1,0 +1,102 @@
+© SANS Institute 2024 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Agata była miłą, inteligentną księgową zbliżającą się do emerytury. Owdowiała kilka lat temu. Czuła ból 
+samotności, który profile randkowe online obiecały ukoić. Przeglądając zdjęcia, natknęła się na Dawida, 
+przystojnego architekta, który rzekomo pracował za granicą. Ich wiadomości przerodziły się w codzienne 
+długie rozmowy. Dawid obsypywał Agatę komplementa mi, jego słowa malowały obraz bratniej duszy 
+pragnącej połączenia. Tygodnie zamieniły się w miesiące, wypełnione wirtualnymi randkami i wspólnymi 
+marzeniami. Agata chętnie zwierzała się Dawidowi ze swoich marzeń i finansów, w tym o gniazdku, na 
+które skrupulatnie oszczędzała. 
+ 
+Potem przyszły "niespodziewane trudności". Dawid twierdząc, że skradziono mu paszport podczas 
+podróży służbowej, desperacko potrzebował pieniędzy na jego wyrobienie. Zaślepiona miłością i 
+zaufaniem Agata, pomimo początkowego wahania, przelała mu znaczną sumę. Stało się to powtarzalnym 
+schematem: sfabrykowane nagłe wypadki lub okazje biznesowe, po których następowała prośba 
+pozyskania środków. Całkowicie ufając Dawidowi, Agata oddała mu swoje wszystkie oszczędności, 
+zaciągając przy tym pożyczki, przekonana, że pomaga mężczyźnie, którego kocha. Rzeczywistość jednak 
+zweryfikowała. Dawid po ostatnim otrzymanym dużym przelewie, całkowicie zniknął. Zdruzgotana i ze 
+złamanym sercem Agata stanęła nie tylko w obliczu ruiny finansowej, ale także miażdżącej zdrady miłości, 
+która nigdy nie istniała. 
+ 
+Oszustwa matrymonialne 
+Oszustwa romansowe to forma oszustwa, w której przestępcy wykorzystują pragnienie miłości i więzi, 
+zdobywając przy tym uczucie i zaufanie ofiary. Budują wizerunki online, często wykorzystując skradzione 
+zdjęcia i profile, tak aby zbudować mocne fundamenty sympatii. Jaki jest ich cel? Manipulowanie ofiarami 
+w celu skłonienia ich do przekazania pieniędzy lub poufnych informacji. Żerując na emocjach, tworzą silną 
+więź ułatwiającą wykorzystywanie ludzi. Oszustwa matrymonialne są trudne do rozpoznania przez ofiary. 
+Jeszcze trudniejsze jest przyznanie się do nich, co prowadzi do katastrofalnych konsekwencji finansowych 
+i osobistych. 
+ 
+Oszuści znajdują swoje ofiary w aplikacjach randkowych lub wysyłają przypadkowe SMS-y lub wiadomości 
+e-mail i rozpoczynają rozmowy. Czy kiedykolwiek otrzymałeś dziwną wiadomość tekstową po prostu 
+mówiącą "Cześć" lub wyglądającą na wiadomość zaadresowaną do niewłaściwej osoby? Mogli to być 
+oszuści, którzy próbowali nawiązać rozmowę. 
+ 
+Wykrywanie i powstrzymywanie oszustw 
+● Zbyt piękne, aby mogło być prawdziwe: Jeśli nowo poznana osoba przez internet wydaje się być 
+idealna, a związek szybko się rozwija, może to wzbudzić podejrzenie. Oszuści często tworzą 
+interesujące profile, aby zwabić ofiary. 
+Chroń swoje serce (i portfel) przed oszustwami matrymonialnymi 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Sierpień 2024
+
+© SANS Institute 2024 
+www.sans.org/security-awareness
+● Miłość w błyskawicznym tempie : Oszuści często na początkowym etapie znajomości wyrażają 
+głębokie uczucia i mocno się angażują. Nawiązanie prawdziwych relacji wymaga czasu. Uważaj na 
+burzliwe romanse i wyznania miłości, które wydają się nierealne. 
+● Brak spotkań : Oszuści zwykle wymyślają wymówki, dlaczego nie mogą spotkać się osobiście. 
+Często powołują się na życie za granicą lub służbę w wojsku. 
+● Prośby o pieniądze: Znakiem rozpoznawczym oszustw matrymonialnych jest to, że osoba, z którą 
+się komunikujesz, pod pretekstem nagłych wypadków, kosztów podróży, rachunków medycznych 
+lub wiz, prosi o pieniądze. Nigdy nie wysyłaj pieniędzy osobie, której nie poznałeś osobiście. 
+● Unikanie połączeń wideo: Oszuści zazwyczaj unikają połączeń wideo lub odwołują je w ostatniej 
+chwili. Zazwyczaj używają fałszywych lub skradzionych zdjęć i chcą uniknąć identyfikacji. 
+● Dyskrecja: Oszust może próbować odwieść cię od komunikacji z przyjaciółmi lub rodziną, 
+obawiając się, że inni mogą ostrzec cię przed oszustwem. Nie bój się zwierzać bliskim o swoich 
+relacjach online. Ich punkt widzenia może być nieoceniony. 
+● Zmiana stylu komunikacji: Jeśli zauważysz niespójności w gramatyce, pisowni lub szczegółach 
+historii, które nie wydają się być zgodne z poprzednimi komunikatami, może to oznaczać, że wielu 
+oszustów korzysta z tego samego profilu. 
+ 
+Oszustwa romansowe prowadzą do znacznych szkód emocjonalnych i finansowych, co czyni je jednymi z 
+najbardziej szkodliwych oszustw. Przy rozpoczynających się związkach, zwłaszcza tych online, bądź 
+ostrożny przy dzieleniu się poufnym informacjami. Jeśli kiedykolwiek poczujesz presję, by wysłać pieniądze 
+lub podzielić się informacjami o saldzie konta, jest to wyraźny sygnał, że coś może być nie tak. Pamiętaj, 
+że nie chodzi tylko o ochronę swoich finansów i danych osobowych, ale także o ochronę swojego serca. 
+ 
+ 
+ 
+Redaktor gościnny 
+Temi Adetula jest wiceprezesem WiCys ON Canada i kierownikiem ds. programów 
+technicznych w obszarze cyberbezpieczeństwa. Posiada ponad 20 -letnie doświadczeniem w 
+zakresie IT / bezpieczeństwa w korporacjach. Jest częścią różnych społeczności zajmujących się 
+integracją o raz orędowniczką kobiet w technologii. Temi posiada licencjat w dziedzinie 
+informatyki oraz tytuł magistra inżyniera w dziedzinie bezpieczeństwa systemów 
+informatycznych. 
+ 
+Źródła 
+ 
+Trzy najczęstsze sposoby ataków: https://www.sans.org/newsletters/ouch/top-ways-attackers-target-you/ 
+Zatrzymaj oszustwa związane z połączeniami telefonicznymi: https://www.sans.org/newsletters/ouch/stop-phone-call-
+scams/ 
+Działania na emocjach - o tym jak cyberprzestępcy oszukują: https://www.sans.org/newsletters/ouch/emotional-
+triggers-how-cyber-attackers-trick-you 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzeni a kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

@@ -1,0 +1,82 @@
+Czym są fake news? 
+Ogólnie rzecz biorąc, fake news są fałszywymi wiadomościami/informacjami/narracjami publikowanymi i 
+promowanymi w taki sposób, jakby były prawdziwe. Z historycznego punktu widzenia, fałszywe 
+wiadomości były zazwyczaj propagandą wygłaszaną przez tych, którzy byli u władzy, aby stworzyć pewne 
+przekonanie lub poprzeć pewne stanowisko, nawet jeśli było ono całkowicie fałszywe. Obecnie media 
+społecznościowe stworzyły środowisko, w którym każdy, kto ma swój plan, może publikować kłamstwa 
+tak, jakby były one prawdą. Do publikowania fake news, często wykorzystuje się opłacone osoby trzecie 
+lub zautomatyzowane programy, często nazywane botami, które mogą publikować fałszywe wiadomości 
+generowane w sposób automatyczny. Motywacji ludzi, którzy tworzą i dystrybuują fałszywe wiadomości 
+jest dużo i często są one niezrozumiałe. 
+ 
+Niebezpieczeństwa ze strony fałszywych wiadomości 
+Podczas gdy niektóre przykłady fałszywych wiadomości wydają się niewinne lub tylko próbą zabawy, 
+wiele z nich może być złośliwych, a nawet niebezpiecznych. Fałszywe wiadomości są tworzone w celu 
+zmiany przekonań, postaw lub postrzegania ludzi, więc ostatecznie zmienią oni swoje zachowanie bądź 
+myślenie. Oznacza to, że jeżeli uwierzysz w informację która jest fałszywa, Twoje przekonania i decyzje 
+mogą być sterowane przez kogoś innego. W niektórych częściach świata za publikowanie fałszywych 
+wiadomości grożą konsekwencje prawne. 
+ 
+Jak rozpoznać fałszywe wiadomości 
+Jak chronić się przed fałszywymi wiadomościami? Najskuteczniejszym sposobem jest uwierzenie i 
+zaufanie wiadomościom dopiero, wtedy gdy można to zweryfikować. 
+ 
+● Rozważ źródło: Zwróć uwagę na rzeczywiste źródło wiadomości. Lokalny blog nie będzie tak 
+godny zaufania jak czasopismo naukowe. Co to za źródło? Jakie są ich cele? 
+● Źródła pomocnicze: Spójrz na przypisy źródłowe cytatów w artykule. Są wiarygodne? Czy one w 
+ogóle istnieją? 
+● Wiele źródeł: Nie polegaj tylko na jednym artykule. Im więcej czytasz z różnych źródeł, tym 
+większe prawdopodobieństwo wyciągnięcia trafnych wniosków. Należy również wziąć pod 
+uwagę różne źródła i perspektywy, na przykład wiadomości z różnych krajów lub autorów o 
+różnym pochodzeniu. 
+Fake News 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Październik 2020
+
+● Sprawdź autora: Kto jest autorem? Zbadaj go, sprawdź czy jest wiarygodny, czy cieszy się dobrą 
+reputacją w społeczności,czy ma konkretny plan działania i czy w ogóle jest osobą prawdziwą. 
+Czy jest on autorem w swojej dziedzinie wiedzy? 
+● Sprawdź datę: Upewnij się, że data jest aktualna i że nie jest to starsza powtórzona historia. 
+● Komentarze: Nawet jeśli artykuł, wideo lub post wydaje się być w porządku, uważaj na 
+komentarze zamieszone w odpowiedziach. Często się zdarza, że linki lub komentarze 
+zamieszczane w odpowiedziach mogą być automatycznie generowane przez boty lub przez 
+osoby zatrudnione do głoszenia złych, mylących lub fałszywych informacji. 
+● Sprawdź swoje uprzedzenia: Bądź obiektywny. Czy twoje własne uprzedzenia mogą wpłynąć na 
+odbiór artykuł? Problem polegamy na tym, że my, ludzie, czytamy tylko wiadomości ze źródeł, 
+które po prostu potwierdzają to, w co już wierzymy. Podejmij wyzwanie, czytając inne źródła, 
+których normalnie byś nie przeglądał. 
+● Sprawdź finansowanie: Nawet legalne publikacje mają sponsorów i reklamodawców, którzy 
+mogą wpływać na artykuł lub źródło. Sprawdź, czy artykuł jest finansowany, a jeśli tak, to przez 
+kogo. 
+● Uważnie przekazuj dalej: Fałszywe wiadomości polegają na tym, że wierzący publikują 
+ponownie, przesyłają dalej lub w inny sposób przekazują fałszywe informacje. Jeśli nie masz 
+pewności co do autentyczności artykułu, zastanów się dwa razy lub wstrzymaj się z 
+udostępnieniem go innym. 
+ 
+Wnioski 
+W dzisiejszym dynamicznym świecie mediów społecznościowych fake newsy otaczają nas każdego dnia. 
+Jeśli nie jesteś ostrożny, ryzykujesz że uwierzysz i zastosujesz się do tego. Poświęć trochę czasu na 
+wykonanie tych podstawowych kroków, aby mieć pewność, że podejmujesz świadome decyzje na 
+podstawie faktów. 
+ 
+ 
+Redaktor gościnny 
+Jason Jordaan jest głównym analitykiem kryminalistycznym w DFIRLABS, specjalistą 
+kryminalistyki cyfrowej i dostawcą usług w zakresie reagowania na incydenty. Jest 
+certyfikowanym instruktorem SANS, który uczy 
+Windows Forensics i Advanced Incident 
+Response a także współautorem kursu Digital Forensic Essentials. Na Twitterze można 
+go znaleźć jako @DFS_JasonJ. 
+ 
+ 
+Źródła 
+ 
+Plakat: How to Spot Fake News http://blogs.ifla.org/lpa/files/2017/01/How-to-Spot-Fake-News-1.jpg
+ 
+Socjotechnika: https://www.sans.org/security-awareness-training/ouch-newsletter/2017/social-
+engineering 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+OUCH! powstaje w ramach programu "Security Awareness" Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license. 
+Powielanie treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia 
+kopiowanych treści oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Cheryl Conley

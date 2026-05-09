@@ -1,0 +1,102 @@
+``` © SANS Institute 2021 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Wstęp 
+Organizacje i rządy na całym świecie nieustannie padają ofiarą ataków internetowych, praktycznie nie ma 
+już dnia bez medialnych doniesień dotyczących cyberbezpieczeństwa. Stąd też ogromne zapotrzebowanie 
+na osoby wyszkolone w zakresie bezpieczeństwa teleinformatycznego, które będą w stanie ochronić nas 
+przed wzrastającym zagrożeniem. Szacuje się, że aktualnie na całym świecie brakuje około trzech milionów 
+specjalistów w dziedzinie cyberbezpieczeństwa. 
+ 
+Czy rozważałeś już karierę jako specjalista ds. bezpieczeństwa informatycznego? Jest to szybko rozwijająca 
+się i dynamiczna branża z dużą ilością specjalizacji do wyboru. Znajdziesz takie kierunki jak informatyka 
+śledcza, bezpieczeństwo urządzeń końcowych, ochrona infrastruktury krytycznej, reagowanie na 
+incydenty, bezpieczne programowanie oraz prowadzanie szkoleń w zakresie świadomości 
+bezpieczeństwa. Kariera w cyberbezpieczeństwie pozwala na pracę z każdego zakątka świata z 
+atrakcyjnymi świadczeniami pracowniczymi oraz jest pracą mającą głębszy sens. 
+ 
+Czy konieczne jest wykształcenie w zakresie cyberbezpieczeństwa? 
+Zdecydowanie nie. Niektórzy z najlepszych specjalistów od cyberbezpieczeństwa mają wykształcenie 
+nietechniczne. Kluczem do opanowania dziedziny cyberbezpieczeństwa jest ciekawość jak działają rzeczy. 
+Gdy tylko zrozumiesz jak funkcjonuje technologia będziesz w stanie poprawiać jej bezpieczeństwo. 
+Najbardziej ekscytującą rzeczą w tej branży jest to, że nauczysz się jak działają różne technologie również 
+dla własnych potrzeb i usprawnienia we własnym domu. 
+ 
+Jak zacząć? 
+Zacznij od poznania różnych technologii i sprawdź co cię naprawdę interesuje. Możesz rozpocząć od 
+poznania urządzeń które masz na co dzień wokół siebie. 
+ 
+● Programowanie: naucz się podstaw programowania. Najlepiej zacznij od Pythona, HTML lub 
+JavaScript. Jeśli nie jesteś pewien od czego zacząć rozważ internetowe kursy lub przeczytaj jedną 
+z wielu dostępnych książek o programowaniu. 
+● Systemy: naucz się podstaw administrowania systemami operacyjnymi Linux i Windows. Jeśli 
+chcesz stać się prawdziwym pasjonatem zacznij od Linuksa. Umiejętność administrowania Linuksa 
+z pozycji konsoli daje olbrzymie możliwości oraz jest przydatne niezależnie od t ego jaką ścieżkę 
+kariery ostatecznie obierzesz. 
+● Aplikacje: naucz się konfigurowania, uruchamiania oraz utrzymania takich aplikacji jak serwer 
+WWW czy DNS. 
+ 
+Kariera w cyberbezpieczeństwie 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Luty 2022
+
+``` © SANS Institute 2021 
+www.sans.org/security-awareness
+● Sieci komputerowe: poznaj zasady działania sieci komputerowych, przechwytuj i analizuj ruch 
+sieciowy, żeby zrozumieć jak działa komunikacja pomiędzy różnymi urządzeniami. Może to być 
+fajna zabawa, zwłaszcza jeśli masz do niej podłączone rozmaite urządzenia. 
+● Usługi chmurowe: Poznaj jak działają usługi chmurowe oraz jak można z nich korzystać. 
+ 
+Świetnym sposobem do nauki jest stworzenie domowego laboratorium testowego. Jest to całkiem proste, 
+dzięki wykorzystaniu wirtualizacji możesz stworzyć wiele wirtualnych urządzeń w jednym komputerze. 
+Możesz również skorzystać z chmury obliczeniowej takiej jak Amazon AW S czy Microsoft Azure. Jeśli 
+chcesz pracować bezpośrednio ze sprzętem, kup proste, tanie urządzenia takie jak Raspberry Pi lub 
+Arduino. Gdy zainstalujesz już różne systemy rozpocznij interakcje między nimi i staraj się jak najwięcej 
+nauczyć programując, konfigurując i optymalizując. Nie ma dobrego czy złego sposobu na rozpoczęcie, po 
+prostu rób to co cię interesuje. 
+ 
+Inną możliwością jest spotkanie się z osobami ze środowiska cyberbezpieczeństwa. Pomyśl nad udziałem 
+w jednej z konferencji w twoim otoczeniu (z reguły nazwy konferencji zawierają przyrostek "con"). Znaną 
+serią spotkań przeznaczonych dla osób początkujących jest wydarzenie z serii Bsides, organizowane 
+również w Warszawie. Najtrudniejsze jest znalezienie pierwszego wydarzenia bądź spotkania. 
+Uczestnictwo w wydarzeniach otwiera niezliczoną ilość nowych możliwości i kontaktów. 
+ 
+Kolejnym sposobem jest czerpanie wiedzy z takich źródeł jak filmy na YouTube, fora internetowe, blogi 
+prowadzone przez specjalistów z branży, uczestnictwo w internetowych rywalizacjach typu CTF (Capture 
+The Flag). Nie pozwól na to aby powstrzymywał cię bra k formalnego wykształcenia czy przekonanie o 
+braku doświadczenia zawodowego. To właśnie twoje dotychczasowe doświadczenia z innej branży są 
+unikalną wartością dodaną. Kluczem jest zapał do nauki. Gdy będziesz rozwijać swoje umiejętności i 
+zaczniesz obcować z ludźmi z branży, to możliwości same przyjdą. 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Lodrina Cherne ( @hexplates) jest głównym rzecznikiem ds. bezpieczeństwa w Cybereason, 
+zajmującym się innowacjami i rozwojem najlepszych praktyk związanych ze standardami i polityką 
+bezpieczeństwa cybernetycznego. Jest również certyfikowanym instruktorem w SANS Institute, 
+gdzie pomaga profesjonalistom zajmującym się bezpieczeństwem informacji w pogłębianiu wiedzy 
+na temat cyfrowej kryminalistyki i reagowania na incydenty (DFIR). 
+ 
+Źródła 
+Security Bsides Conferences: http://www.securitybsides.com/ 
+Women in Cybersecurity: https://www.wicys.org/ 
+New2Cyber YouTube Playlist: https://youtube.com/playlist?list=PLtgaAEEmVe6BQkZiJC5nIk9xx74QTGtsZ 
+SANS Cyber Academies: https://www.sans.org/scholarship-academies/ 
+SANS Cyber Aces: https://www.cyberaces.org/ 
+Cybersecurity Podcasts: https://www.sans.org/blog/cybersecurity-podcast-roundup/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+OUCH! powstaje w ramach programu "Security Awareness" Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

@@ -1,0 +1,100 @@
+© SANS Institute 2022 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Wstęp 
+ 
+Często mówimy o wiosennych porządkach w momencie, kiedy przeglądamy nasze rzeczy i 
+reorganizujemy nasz dom w ramach przygotowań do sezonu letniego. To także doskonały czas na 
+coroczny przegląd cyfrowego życia. Poniższe kroki wykonywane raz w roku, sprawią że technologia, 
+która nam towarzyszy będzie bezpieczna i w pełni wykorzystana. 
+ 
+KONTA: Przejrzyj swoje wszystkie konta internetowe. Używanie długiego, unikalnego hasła do 
+każdego konta gwarantuje, że jeśli jedno konto hasło zostanie przejęte, inne będą nadal bezpieczne. 
+Masz trudności z zapamiętaniem haseł? Nie martw się, nie tylko Ty. Pomocne może okazać się 
+korzystanie z menedżera haseł do bezpiecznego ich przechowywania. Jeśli to możliwe, włącz 
+uwierzytelnianie wieloskładnikowe (MFA), zwłaszcza w przypad ku osobistych kont e -mail lub kont 
+bankowych. To najważniejszy krok, jaki możesz zrobić, aby zabezpieczyć dowolne konto internetowe. 
+Jeśli masz konta internetowe, z których nie korzystałeś od ponad roku, być może nadszedł czas, aby 
+je po prostu usunąć. 
+ 
+APLIKACJE: Aktualizowanie urządzeń i oprogramowania zapewnia zainstalowanie najnowszych 
+niezbędnych funkcji i usunięcie znanych luk w zabezpieczeniach. Najprostszym sposobem na to jest 
+włączenie automatycznych aktualizacji na wszystkich urządzaniach, z który ch korzystasz. Odinstaluj 
+zbędne programy i aplikacje, z których nie korzystasz. Wiele aplikacji zajmuje cenne miejsce w 
+pamięci urządzenia. Niektóre z nich mogą być źródłem podatności oraz mogą powodować 
+spowolnienie działania urządzenia. Im mniej masz zainstalowanych aplikacji, tym bezpieczniejszy jest 
+system i Twoje dane. Wiele urządzeń pokazuje, jak długo aplikacje były nieużywane. Jeśli minął rok 
+od ostatniego użycia aplikacji, prawdopodobnie już jej nie potrzebujesz. 
+ 
+BANKOWOŚĆ: Sprawdź, czy konta bankowe, konta inwestycyjne i inne konta związane z finansami są 
+skonfigurowane tak, aby ostrzegały Cię za każdym razem, gdy dokonywana jest transakcja, zwłaszcza 
+w przypadku nietypowych logowań lub przelewów. Dzięki temu będziesz zawsze powiadamiany o 
+wystąpieniu transakcji i będziesz mógł wykryć wszelkie oszustwa lub nieautoryzowane działania. Im 
+szybciej zauważysz oszustwo, tym szybciej będziesz w stanie je powstrzymać. W zależności od kraju, 
+w którym mieszkasz, dodatkowym krokiem, jaki możesz podjąć, jest usługa zastrzeżenia 
+kredytowego, co może być jednym z najskuteczniejszych sposobów ochrony Twojej tożsamości. 
+ 
+Cyfrowe wiosenne porządki w 7 krokach 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Marzec 2023
+
+© SANS Institute 2022 
+www.sans.org/security-awareness
+URZĄDZENIA: Z biegiem czasu możesz zbierać stare urządzenia, których już nie potrzebujesz — na 
+przykład stary smartfon lub urządzenia, które były częścią inteligentnego domu. Jeśli pozbędziesz się 
+któregokolwiek z tych urządzeń, najpierw usuń z niego wszelkie dane osobowe. Większość urządzeń 
+ma prostą funkcję czyszczenia, która bezpiecznie usuwa wszystkie dane osobowe (lub przywraca 
+ustawienia fabryczne). 
+ 
+KOPIE ZAPASOWE : Bez względu na to, jak bardzo jesteś bezpieczny, w pewnym momencie 
+najprawdopodobniej będziesz potrzebować kopii zapasowych, aby odzyskać ważne informacje lub 
+przenieść je na nowe urządzenie. Ustaw urządzenia tak, aby automatycznie tworzyły kopie zapasowe 
+w chmurze. Aby uprościć proces tworzenia backupu, zalecamy skorzystanie z programów do 
+automatycznego tworzenia kopii zapasowych. 
+ 
+RODZICIELSTWO: Jeśli jesteś rodzicem lub opiekunem, to dobry moment, aby przejrzeć ustawienia 
+kontroli rodzicielskiej dla d zieci. Gdy dzieci będą stawały się starsze, najprawdopodobniej będziesz 
+musiał zaktualizować te ustawienia. 
+ 
+MEDIA SPOŁECZNOŚCIOWE : Przejrzyj ustawienia prywatności na swoich kontach w mediach 
+społecznościowych – to kopalnia danych osobowych. Sprawdź swoje konta, aby upewnić się, że nie 
+udostępniasz poufnych informacji, takich jak data urodzenia, numer telefonu, adres, informacje 
+bankowe lub lokalizacja na zdjęciach. 
+ 
+Poświęcenie zaledwie kilku godzin rocznie na wykonanie tych czynności znacznie ułatwi ochr onę 
+Ciebie,Twoich urządzeń i informacji. 
+ 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Ritu Gill (@OSINTtechniques) jest instruktorem SANS w zakresie programowania i 
+analitykiem, który specjalizuje się w Open-Source Intelligence (OSINT). Więcej 
+informacji o Ritu: https://www.sans.org/profiles/ritu-gilli 
+https://www.osinttechniques.com. 
+ 
+Źródła 
+ 
+Menedżer haseł: https://www.sans.org/newsletters/ouch/password-managers/ 
+Moc aktualizacji: https://www.sans.org/newsletters/ouch/the-power-of-updating/ 
+Utylizacja urządzeń mobilnych: https://www.sans.org/newsletters/ouch/disposing-mobile-devices/ 
+Czy posiadasz kopie zapasowe?: https://www.sans.org/newsletters/ouch/backups/ 
+Bezpieczeństwo dzieci online: https://www.sans.org/newsletters/ouch/online-security-kids 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

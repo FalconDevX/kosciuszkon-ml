@@ -1,0 +1,75 @@
+Wstęp
+Wielu z nas z niecierpliwością wypatruje wiosny. Wszystko budzi się do życia, krajobraz zaczyna nabierać barw, dla wielu jest 
+to okazja do rozpoczęcia wiosennych porządków. O ile łatwo jest dostrzec potrzebę oczyszczenia i uporządkowania naszego 
+otoczenia, o tyle uświadomienie sobie potrzeby porządków cyfrowych już nie koniecznie. Oto kilka wskazówek mówiących o 
+tym jak uporządkować swoje cyfrowe życie oraz ustanowić nowe cyfrowe nawyki:
+KOPIE ZAPASOWE : Wymieniliśmy ten krok jako pierwszy, ponieważ na dłuższą metę jest to jeden z 
+najważniejszych kroków, który powinieneś zrobić zanim przejdziesz do kolejnych etapów. Wcześniej czy później 
+najprawdopodobniej kopia zapasowa ważnych danych będzie Ci potrzebna. Powody utraty danych mogą 
+być różne, od problemów z dyskiem twardym, przez zgubienie urządzenia, po zaszyfrowanie ich złośliwym 
+oprogramowaniem ransomware. Aby uprościć proces tworzenia backupu, zalecamy skorzystanie z programów 
+do automatycznego tworzenia kopii zapasowych.
+USUŃ: Pozbądź się wszystkich programów i aplikacji, z których nie korzystasz. Wiele aplikacji zajmuje 
+cenne miejsce w pamięci urządzenia. Niektóre z nich mogą być źródłem podatności oraz mogą powodować 
+spowolnienie działania urządzenia. Im mniej masz zainstalowanych aplikacji, tym bezpieczniejszy jest system 
+i Twoje dane. Wiele urządzeń pokazuje ile czasu minęło od momentu, kiedy ostatni raz korzystałeś z aplikacji. 
+Jeśli minęło kilka miesięcy, istnieje szansa, że aplikacja nie jest Ci potrzebna.
+AKTUALIZACJE: Aktualizuj wszystkie posiadane urządzenia i aplikacje oraz włączaj automatyczne aktualizacje, 
+gdy tylko jest to możliwe. W ten sposób urządzenia i aplikacje będą zabezpieczone przed znanymi zagrożeniami 
+a ich szybkość pracy może zostać zoptymalizowana.
+HASŁA: Przejrzyj swoje hasła dostępowe. Niedopuszczalne jest używanie jednego hasła dla wielu kont. Jeśli 
+to robisz, zmień swoje przyzwyczajenia. Stwórz unikalne hasło dla każdego konta. Często użytkownicy mają 
+problem z zapamiętaniem wszystkich unikalnych haseł. Zalecamy korzystanie z menedżera haseł. Dodatkowo 
+warto również wspomnieć o uwierzytelnianiu dwuskładnikowym (2FA). Dwuskładnikowe uwierzytelnianie 
+wymaga wprowadzenia dodatkowego składnika (biometria, pin, token) dlatego warto z niego korzystać 
+wszędzie gdzie jest to możliwe.
+KONTA BANKOWE: Upewnij się, że w banku bądź u operatora karty kredytowej masz włączone powiadomienia, 
+które poinformują Cię za każdym razem kiedy Twoje konto zostanie obciążone. Im szybciej zauważysz oszustwo, tym 
+szybciej będziesz w stanie je powstrzymać. Rozważ włączenie usługi zastrzeżenia kredytowego. To dobra metoda 
+na przypadkowe zaciągnięcie kredytu finansowego przez osoby postronne wykorzystujące Twoje dane osobowe.
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Marzec 2020
+www.sans.org/security-awareness
+Wiosenne porządki
+
+PRZEGLĄDARKA INTERNETOWA: Przejrzyj zainstalowane wtyczki i rozszerzenia w przeglądarce internetowej. 
+Zwróć uwagę na ustawienia uprawnień jakie maja nadane zainstalowane wtyczki. Istnieją takie, które wymagają 
+dostępu do lokalizacji, listy haseł bądź kontaktów. Zweryfikuj zainstalowane dodatki i usuń te z których nie 
+korzystasz lub masz obawy dotyczące prywatności.
+MEDIA SPOŁECZNOŚCIOWE : Przejrzyj swoje konta mediów społecznościowych. Zweryfikuj ustawienia 
+prywatności wrzuconych przez siebie zdjęć, materiałów wideo czy postów. Usuń te które są zbędne. Spróbuj 
+wyszukać siebie w wyszukiwarce internetowej aby zobaczyć jakie informacje są o Tobie ogólnodostępne w 
+internecie. Każdą informację, zdjęcie itd. możesz opublikować dla wybranej grupy osób, zapamiętaj że nie 
+musisz publikować wszystkiego dla wszystkich.
+BIURKO: Zrób porządek w miejscu pracy. Wymarz dane z dysków twardych, które są Ci niepotrzebne. Pozbądź 
+się kolorowych karteczek, które zawierają zbyt wiele cennych informacji. Warto zastanowić się również nad 
+zainwestowanie w niszczarkę dokumentów.
+EMAIL: Przejrzyj skrzynkę pocztową i usuń to czego nie potrzebujesz oraz zorganizuj to co robisz. Zwróć uwagę 
+na wszystkie poufne dokumenty, takie jak dokumenty z datą urodzin, numerem PESEL lub dowodu osobistego. 
+Zapisz sobie je lub wydrukuj ale nie trzymaj na skrzynce pocztowej.
+Przebywanie na łonie natury jest znacznie przyjemniejsze, dlatego zdajemy sobie sprawę, że porządki cyfrowe mogą się 
+wydawać mało interesującym zadaniem, lecz dzięki zastosowaniu się do naszych rad zwiększysz stopień ochrony swojego 
+urządzenia oraz danych osobowych. Jeśli przerasta Cie ogrom pracy z tym związany, warto zacząć od kilku elementów lub 
+spróbuj wdrażać je stopniowo np. jeden element tygodniowo. Każdy mały krok zmierza w kierunku zwiększenia ochrony.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK, powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi zespołami 
+na całym świecie.
+WWW: http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+www.sans.org/security-awareness
+© SANS Institute 2020
+Redaktor gościnny
+Katie Nickels (@LiketheCoins) jest głównym analitykiem wywiadu w Red Canary. Jest również 
+instruktorem kursu SANS FOR578: CyberThreat Intelligence. Od ponad dekady zajmuje się ochroną 
+sieci Internet, reagowaniem na incydenty oraz poszukiwaniem nowych zagrożeń cybernetycznych.
+Źródła
+Czy robisz kopie zapasowe?: http://www.sans.org/u/ZVr
+Tworzenie haseł w prostszy sposób: http://www.sans.org/u/ZVw
+Odszukaj siebie w sieci: http://www.sans.org/u/ZVB
+Utylizacja urządzenia mobilnego: http://www.sans.org/u/ZVG
+Biuletyn OUCH! powstaje w ramach programu „Security Awareness” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license . 
+Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. Editorial Board: Walt Scrivens, 
+Phil Hoffman, Alan Waggoner, Cheryl Conley | Polski przekład (NASK/CERT Polska): Bartłomiej Wnuk, Konrad Purzycki, Janusz Urbanowicz

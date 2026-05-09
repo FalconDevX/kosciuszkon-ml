@@ -1,0 +1,100 @@
+© SANS Institute 2023 
+www.sans.org/security-awareness
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Czy jesteś zmęczony wymyślaniem i zapamiętywaniem nowych haseł? 
+ 
+Większość z nas ma problem z tworzeniem, zarządzaniem i zapamiętywaniem wszystkich swoich 
+haseł. Często zdarza się, że każda witryna ma inne zasady dotyczące haseł, a wiele z nich wymaga 
+dodatkowych środków bezpieczeństwa. Czy nie byłoby lepiej, gdyby istn iało skuteczne rozwiązanie 
+wszystkich problemów z hasłami? Istnieje, jest nim menedżer haseł. 
+ 
+Menedżer haseł upraszcza i zabezpiecza cyfrowe życie 
+ 
+Menedżer haseł to oprogramowanie, które przechowuje hasła w zabezpieczonej bazie danych. 
+Aplikacja szyfruje zawartość całej bazy i zabezpiecza ją za pomocą głównego hasła. Gdy potrzebujesz 
+jednego ze swoich haseł, musisz wpisać główne hasło w menedżerze, aby odblokować bazę. W 
+momencie logowania, menedżer haseł w sposób automatyczny i bezpieczny może przekazać login i 
+hasło do konta, do którego chcesz się zalogować. Pozwala to łatwo zarządzać wszystkimi unikalnymi 
+hasłami do kont, co ma kluczowe znaczenie dla bezpieczeństwa. 
+ 
+Większość menedżerów haseł ma funkcję automatycznego synchronizowania pomiędzy wieloma 
+urządzeniami. W ten sposób po aktualizacji hasła, np. na laptopie, zmiany są synchronizowane na 
+wszystkich urządzeniach, z których korzystasz. Menedżer wykrywa, kiedy próbujesz założyć nowe 
+konto internetowe lub zaktualizować hasło dla istniejącego konta i automatyczne aktualizuje dane w 
+bazie. 
+ 
+Jedynym hasłem, które musisz zapamiętać, jest hasło dostępu do menedżera haseł. Bardzo ważne 
+jest, aby to hasło było długie i unikalne. Zalecamy, aby hasło było wyrażeniem hasłowym, czyli długim 
+hasłem składającym się z wielu słów lub fraz. Jeśli Twój menedżer haseł obsługuje uwierzytelnianie 
+wieloskładnikowe, warto z niego skorzystać. Niezwykle ważne jest, aby zapamiętać swoje główne 
+hasło. Jeśli je zapomnisz, stracisz dostęp do bazy. 
+ 
+Wybór menedżera haseł 
+ 
+Istnieje wiele menedżerów haseł na rynku. W sekcji "Źródła" udostępniamy link do strony 
+zawierającej przegląd oprogramowania tego typu. Próbując znaleźć rozwiązanie dopasowane do 
+Twoich potrzeb, miej na uwadze następujące rzeczy: 
+ 
+Menedżer haseł 
+Biuletyn Bezpieczeństwa Komputerowego 
+OUCH! Sierpień 2023
+
+© SANS Institute 2023 
+www.sans.org/security-awareness
+● Aplikacja powinna być pro sta w użyciu. Jeśli trafisz na taką, która jest zbyt skomplikowana, 
+przetestują inną i znajdź taką, która Ci odpowiada. 
+● Dobry menedżer haseł powinien być kompatybilny i synchronizować się ze wszystkimi 
+urządzeniami, z których korzystasz. 
+● Używaj tylko znany i popularnych menedżerów haseł. Uważaj na aplikacje, które nie były 
+aktualizowane od dłuższego czasu lub mają niewiele lub żadnych opinii użytkowników. 
+● Upewnij się, że dostawca aktywnie aktualizuje menedżer haseł i miej pewność, że zawsze 
+używasz najnowszej wersji. 
+● Menedżer haseł powinien dawać możliwość przechowywania innych poufnych danych, takich 
+jak odpowiedzi na pytania pomocnicze w przypadku odzyskiwania konta, numery kart 
+kredytowych itp. 
+● Bądź uważny, jeśli program umożliwia odzyskanie hasła główne go lub pozwala zmienić je 
+pracownikom pomocy technicznej. 
+ 
+Możesz zapisać swoje główne hasło na kartce i przechowywać je w bezpiecznym miejscu, znanym 
+tylko Tobie. 
+ 
+Uważasz, że menedżer haseł nie jest dla Ciebie? 
+ 
+Niektóre osoby mogą uważać menedżer haseł za zbyt skomplikowane w użyciu. Aby zachować 
+bezpieczeństwo, do każdego konta potrzebne jest unikalne hasło. Czy jest możliwe zapamiętanie 
+wszystkich unikalnych haseł? Jedną z opcji jest zapisanie tych haseł na kartce. Ta opcja jest 
+niebezpieczna i nie jest odpowiednia w przypadku haseł służbowych. Ale może to być ostateczną 
+alternatywa dla kont prywatnych, jeśli menedżer haseł Cię nie przekonuje. Kluczowym krokiem jest 
+zabezpieczenie notatek. Jeśli ty lub ktoś z bliskich używa notatnika do zapisywania haseł, upewnij się, 
+że jest on przechowywany w bezpiecznym miejscu, do którego dostęp masz tylko ty lub zaufani 
+członkowie rodziny. 
+ 
+ 
+ 
+ 
+Redaktor gościnny 
+Noureen Njoroge jest specjalistą ds. bezpieczeństwa z doświadczeniem w złożonych i szybko 
+zmieniających się środowiskach zarówno w sektorze publicznym, jak i prywatnym. Posiada 
+doświadczenie w kwestiach dotyczących nowych technologii. Noureen jest liderem, który 
+przekazuje wiedzę innym. LinkedIn: https://www.linkedin.com/in/noureennjoroge/. 
+ 
+Źródła 
+Menedżer haseł: https://www.pcmag.com/picks/the-best-password-managers 
+Zabezpieczenie kont online: https://www.sans.org/newsletters/ouch/one-simple-step-to-securing-
+your-accounts/ 
+ 
+Polski przekład CERT Polska: Bartłomiej Wnuk, Aleksandra Węgrzynowicz 
+ 
+OUCH! jest publikowany przez firmę SANS Security Awareness i jest rozpowszechniany pod licencją Creative Commons BY-NC-ND 4.0 license. Powielanie 
+treści biuletynu jest dozwolone jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszenia zawartości samego biuletynu. Zespół redaktorski: Walter Scrivens, Phil Hoffman, Alan Waggoner, Leslie Ridout, Princess Young.

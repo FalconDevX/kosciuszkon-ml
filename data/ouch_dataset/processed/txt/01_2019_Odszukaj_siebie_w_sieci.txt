@@ -1,0 +1,75 @@
+Odszukaj siebie w sieci
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Styczeń 2019
+www.sans.org/security-awareness
+Wstęp
+Zapewne słyszałeś jak ważne jest chronienie swojej prywatności oraz informacji jakie udostępniasz w sieci. W celu krótkiej 
+demonstracji, spróbujemy pokazać Ci w jaki sposób samodzielnie odszukać publicznie dostępne informacje na swój temat. 
+Proces ten nazywa się w skrócie OSINT i w wolnym tłumaczeniu oznacza „wywiad otwartoźródłowy”. Oznacza on przeszukiwanie 
+publicznie dostępnych zasobów w celu dowiedzenia się, jak wiele informacji można uzyskać na temat danego adresu IP , 
+instytucji, czy po prostu osoby takiej jak Ty. Miej na uwadze, że cyberprzestępcy używają dokładnie tych samych narzędzi i 
+technik. Im więcej informacji uda im się pozyskać na Twój temat, tym łatwiej będzie im przygotować np. ukierunkowany atak. 
+Wspomniana idea jest znana od lat, jednak najnowsze narzędzia sprawiają, że o wiele łatwiej ją zrealizować.
+Jak wyszukiwać informacje
+Nie jesteś w stanie znaleźć wszystkich poszukiwanych informacji na jednej stronie internetowej. Zamiast tego, zacznij od 
+odwiedzenia jednej witryny, wyszukaj jakiekolwiek interesujące informacje, a następnie wykorzystaj je w dalszym procesie 
+szukania. Dopiero łączenie wyników pozwoli Ci na zebranie i sprofilowanie interesującego materiału. Dobrym miejscem do 
+rozpoczęcia poszukiwań jest skorzystanie z wyszukiwarek takich jak Google, Bing czy DuckDuckGo. Każda z nich zaindeksowała 
+inne informacje na Twój temat, warto więc połączyć te wyniki. Zacznij od wyszukania swojego imienia i nazwiska wpisanego w 
+cudzysłów, następnie poszerz swoje zapytanie o tzw. operatory. Operatory są rozumianymi przez przeglądarkę poleceniami 
+lub znakami specjalnymi, dzięki którym lepiej zdefiniujesz to czego szukasz. Jest to szczególnie ważne np. gdy posiadasz 
+popularne imię i nazwisko. Proces wyszukiwania może wtedy wymagać podania dodatkowych informacji, takich jak adres 
+e-mail lub miasto w którym mieszkasz. Więcej informacji o operatorach i zaawansowanych technikach wyszukiwania znajdziesz 
+w sekcji przydatne linki na końcu tego artykułu. Poniżej kilka przykładowych zapytań dla wyszukiwarki:
+• „Imię Nazwisko” - jakie informacje na temat tej osoby mogę znaleźć w sieci
+• „Imię Nazwisko@” - wyszukanie adresów e-mail mogących mieć powiązania z tą osobą
+• „Imię Nazwisko” filetype:doc - wyszukanie dokumentów word zawierających imię i nazwisko wspomnianej osoby
+W sieci istnieją witryny dedykowane wyszukiwaniu informacji o osobach. Jeśli chcesz, możesz odwiedzić jedną z nich i 
+sprawdzić, czy zawiera informacje na Twój temat. Miej na uwadze, że witryny tego typu nie zawsze są dokładne, a ich zawartość 
+może być zależna od konkretnej lokalizacji geograficznej. Zweryfikowanie odnalezionych informacji może wymagać od Ciebie 
+skorzystania z kilku serwisów tego typu.
+
+OUCH! | February, 2018
+Przydatne linki
+Socjotechnika: https://www.sans.org/u/LW6
+Wskazówki dotyczące korzystania z mediów społecznościowych: https://www.sans.org/u/LWb
+Operatory wyszukiwania: https://support.google.com/websearch/answer/2466433
+Platforma OSINT: https://osintframework.com/
+Szkolenie OSINT SANS SEC487: https://www.sans.org/u/LWZ
+• https://pipl.com
+• https://cubib.com
+• https://familytreenow.com
+Na koniec warto wspomnieć, że podczas zdobywania informacji możesz korzystać z serwisów takich jak Wyszukiwarka 
+Grafiki Google, Mapy Google, media społecznościowe i wiele innych. Zachęcamy do zapoznania się z aktualizowaną na 
+bieżąco platformą OSINT dostępną pod adresem https://osintframework.com
+W jakim celu szukać informacji o sobie?
+1. Dowiesz się, co inni ludzie bądź organizacje zgromadziły lub udostępniły na Twój temat (kościoły, szkoły, 
+kluby sportowe lub inne lokalne społeczności).
+2. Zrozumiesz, że wspomniane zasoby są dostępne dla każdego, w tym cyberprzestępców, mogących 
+wykorzystywać je przeciwko Tobie. Bądź podejrzliwy. Jeśli na przykład otrzymasz pilny telefon od kogoś, 
+kto twierdzi że dzwoni z Twojego banku, powołując się na znajomość podstawowych informacji o Tobie, 
+nie znaczy to, że rzeczywiście rozmawiasz z pracownikiem banku. W takiej sytuacji lepiej zakończyć 
+rozmowę, a następnie skontaktować się z bankiem zaufanym kanałem telefonicznym, potwierdzając jego 
+tożsamość. To samo dotyczy poczty elektronicznej, jeśli wiadomość zawiera prawdziwe informacje na 
+Twój temat, nie oznacza to, że jest wiarygodna.
+3. Zastanów się jakie treści udostępniasz publicznie w internecie i jaki wpływ może mieć znajomość tych 
+informacji na Ciebie, Twoją rodzinę lub pracodawcę.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK, powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi zespołami 
+na całym świecie.
+WWW: http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+Biuletyn OUCH! powstaje w ramach programu „Security Awareness” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license . 
+Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. Editorial Board: Walt Scrivens, 
+Phil Hoffman, Alan Waggoner, Cheryl Conley | Polski przekład (NASK/CERT Polska): Sebastian Kondraszuk, Michał Strzelczyk, Jacek Sikorski
+www.sans.org/security-awareness
+© SANS Institute 2019
+Nico Dekens (@dutch_osintguy) specjalizuje się w wywiadzie otwartoźródłowym (ang. Open 
+Source Intelligence). Je, śpi i podejmuje wszelkie działania mające związek z gromadzeniem
+oraz analizą informacji. Jest także międzynarodowym wykładowcą podejmującym tematykę 
+białego wywiadu, internetu rzeczy oraz bezpieczeństwa operacyjnego w instytucjach rządowych
+i przedsiębiorstwach z rankingu Fortune 500.
+Redaktor Gościnny

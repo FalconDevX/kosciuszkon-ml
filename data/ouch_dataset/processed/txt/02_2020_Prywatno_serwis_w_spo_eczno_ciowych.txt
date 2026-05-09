@@ -1,0 +1,68 @@
+Wstęp
+Większość ludzi nigdy nie weszłaby do przepełnionego pomieszczenia i głośno ogłosiła obcym osobom szczegóły z prywatnego 
+życia: od szczegółów dotyczących problemów zdrowotnych po imiona członków rodziny i znajomych, wiek, lokalizację szkoły 
+lub rodzaj pracy, który wykonują. Często jednak te same osoby nie zastanowią się dwa razy zanim opublikują ten sam rodzaj 
+informacji w mediach społecznościowych. Implikacje dzielenia się zbyt wieloma informacjami mogę mieć wpływ nie tylko na 
+nasze prywatne i zawodowe życie, ale także na życie najbliższej rodziny i znajomych.
+Media społecznościowe to świetne narzędzie to odnalezienia dawnych znajomych, uczenia się i dzielenia swoimi doświadczeniami. 
+Niemniej jednak, samo upewnienie się, że ustawienia prywatności na portalu społecznościowy są odpowiednie nie wystarczy 
+do naszej ochrony. Gdy tylko coś opublikujemy to de facto tracimy nad tym kontrolę. Musimy mieć świadomość tego jakie dane 
+są gromadzone i jak są wykorzystywane. Oto kilka kwestii na które powinniśmy zwrócić uwagę w trakcie korzystania z mediów 
+społecznościowych:
+Ustawienia prywatności: Uważnie ustawiajmy i regularnie przeglądajmy ustawienia prywatności dla wszystkich 
+naszych kont w mediach społecznościowych, w szczególności kiedy zmienia się polityka prywatności lub zasady 
+działania usługi. Pamiętajmy, że nawet jeśli ograniczymy grono odbiorców treści publikowanych przez nas to dane 
+i tak są zbierane, przetwarzane i przechowywane na serwerach serwisu - najprawdopodobniej na zawsze.
+Drzewo prywatności: Ustawienia prywatności nie są wstanie ochronić nas przed znajomymi, krewnymi i 
+współpracownikami, którzy widzą nasze posty i mogą nimi dalej dzielić się z gronem swoich znajomych.
+Współdzielenie się rodziną: Każdy uwielbia rozmawiać o swoich przyjaciołach i rodzinie. Natomiast nierozsądne 
+publikowanie zdjęć tortu urodzinowego lub informacji o naszych problemach zdrowotnych może prowadzić do 
+szykan skierowanych pod naszym adresem, w szczególności dotyczy to osób młodszych dla których może 
+mieć to wpływ na życie prywatne.
+Dzielenie się informacjami: Jeśli korzystanie z serwisu jest darmowe, to znaczy że my jesteśmy ich produktem. 
+Nigdy nie ma nic za darmo. Badania i dochodzenia wykazały, że informacje o tym co robimy w sieci mogą być 
+sprzedawane innym.
+Biuletyn Bezpieczeństwa Komputerowego
+OUCH! | Luty 2020
+www.sans.org/security-awareness
+Prywatność serwisów społecznościowych
+
+OUCH! | February, 2018
+Lokalizacja usług: Informacja o dacie logowania do serwisu może zostać dodana do innych naszych danych 
+osobowych, po to aby stworzyć dokładniejszy profil naszych nawyków, który może być podstawą do stworzenia 
+pola do prześladowania nas. Ponadto bądźmy świadomi, że informacje o naszej lokalizacji często zawarte są w 
+zdjęciach lub filmach, które publikujemy.
+Sztuczna Inteligencja: Media społecznościowe, marketing i sztuczna inteligencja (AI) to doskonała mieszanka. 
+Sprzedawcy używają informacji zebranych na podstawie naszych zwyczajów podczas używania internetu 
+aby sprofilować reklamy oparte o ostatnie wyszukiwanie lub zakupy, dzięki czemu zdobywają jeszcze więcej 
+informacji o nas.
+Cyfrowa śmierć: Gdy osoba umiera jej byt w cyberprzestrzeni staje się jeszcze bardziej narażony na podatności 
+i cyberprzestępców. Warto pomyśleć o przejęciu lub usunięciu konta zmarłej osoby. Prywatności nie ogranicza 
+się jedynie do konkretnej osoby ale zawsze w jakimś stopniu ma wpływ na jej rodzinę i znajomych.
+Niecelowe upublicznienie informacji: Informacje, które upubliczniamy mogą odkrywać wiele szczegółów z 
+prywatnego życia, a co za tym idzie, podpowiedzi do sposobu konstruowania haseł których używamy.
+Prywatność to coś więcej niż jedynie ustawienia prywatności na koncie portalu społecznościowego. Im więcej informacjami 
+upubliczniamy, tym więcej informacji gromadzą i wykorzystują przedsiębiorstwa, rządy i inni. Niezależnie od ustawień prywatności, 
+jednym z najlepszych rozwiązań aby się uchronić jest ograniczenie tego co udostępniamy o sobie i tego co inni upubliczniają o nas.
+Polski przekład
+CERT Polska jest zespołem działającym w strukturach NASK, powołanym do reagowania na zdarzenia naruszające 
+bezpieczeństwo w polskiej sieci Internet. Należy do organizacji FIRST, w ramach której współpracuje z podobnymi zespołami 
+na całym świecie.
+WWW: http://www.cert.pl
+Twitter: @CERT_Polska 
+Facebook: http://facebook.com/CERT.Polska
+www.sans.org/security-awareness
+© SANS Institute 2019
+Redaktor gościnny
+Cathy Click posiada ponad 14 letnie doświadczenie w propagowaniu świadomości bezpieczeńswa 
+w  ramach  programu  dla  przedsiębiorstw  z  Fortune  500  global.  Cathy  uwielbia  rozmawiać  o 
+skomplikowanych technicznych tematach i przedstawiać je w prosty, łatwy do zrozumienia sposób, 
+aby  podnosić  poziom  bezpieczeństwa  innych  osób.
+Źródła
+Cyfrowa spuścizna: http://www.sans.org/u/Z2G
+Oszustwa za pośrednictwem mediów społecznościowych: http://www.sans.org/u/Z2L
+Czy robisz kopie zapasowe?: http://www.sans.org/u/Z2Q
+Biuletyn OUCH! powstaje w ramach programu „Security Awareness” Instytutu SANS i jest wydawany na licencji Creative Commons BY-NC-ND 4.0 license . 
+Powielanie treści biuletynu jest dozwolne jedynie w celach niekomercyjnych oraz pod warunkiem zachowania informacji o źródle pochodzenia kopiowanych treści 
+oraz nienaruszania zawartości samego biuletynu. Informacje kontaktowe: www.sans.org/security-awareness/ouch-newsletter. Editorial Board: Walt Scrivens, 
+Phil Hoffman, Alan Waggoner, Cheryl Conley | Polski przekład (NASK/CERT Polska): Bartłomiej Wnuk, Konrad Purzycki, Janusz Urbanowicz
