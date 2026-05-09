@@ -3,16 +3,23 @@ HTTP API for rag_cyber_assistant — backend should call this instead of Ollama 
 
 Run: uvicorn rag_api:app --host 0.0.0.0 --port 8080
 
-Chat:
-- POST /chat with Content-Type: application/json → ChatRequest body (same as before).
-- POST /chat with multipart/form-data → fields: message (str), history (optional JSON string),
-  file (optional) → VirusTotal file scan via same VT API key as URL checks.
+Chat — VirusTotal file scan runs **on this server** before the LLM (not OpenAI-style tool calling).
+The LLM only sees JSON results in the prompt.
+
+Ways to attach a file:
+1) multipart/form-data: fields `message`, optional `history` (JSON string), optional `file` (binary).
+2) application/json: same as ChatRequest plus optional `file_base64` (standard base64) and `file_name`.
+
+If the UI sends only `{ "message": "check this file" }` without bytes, **no scan runs** — the model
+will guess from RAG context only.
 """
 
 from __future__ import annotations
 
+import base64
 import io
 import json
+import os
 from contextlib import asynccontextmanager, redirect_stdout
 from typing import Any
 
@@ -67,6 +74,14 @@ class ChatRequest(BaseModel):
         default_factory=list,
         description="Optional prior turns; roles user|assistant",
     )
+    file_base64: str | None = Field(
+        default=None,
+        description="Optional file as standard base64 (for JSON clients). Triggers VirusTotal file scan.",
+    )
+    file_name: str | None = Field(
+        default=None,
+        description="Original filename when using file_base64 (e.g. id_ed25519.pub).",
+    )
 
 
 class ChatResponse(BaseModel):
@@ -92,6 +107,27 @@ def _normalize_history(raw: Any) -> list[dict[str, str]]:
         if role in {"user", "assistant"} and isinstance(content, str) and content.strip():
             out.append({"role": role, "content": content.strip()})
     return out
+
+
+def _decode_optional_base64_file(parsed: ChatRequest) -> tuple[bytes, str] | None:
+    if not parsed.file_base64 or not parsed.file_base64.strip():
+        return None
+    cleaned = parsed.file_base64.strip()
+    try:
+        raw = base64.b64decode(cleaned, validate=True)
+    except Exception as exc:
+        raise HTTPException(status_code=422, detail=f"invalid file_base64: {exc}") from exc
+    if not raw:
+        return None
+    max_mb = max(1, int(os.getenv("VIRUSTOTAL_MAX_FILE_MB", "32")))
+    max_bytes = max_mb * 1024 * 1024
+    if len(raw) > max_bytes:
+        raise HTTPException(
+            status_code=413,
+            detail=f"file exceeds VIRUSTOTAL_MAX_FILE_MB={max_mb}",
+        )
+    name = (parsed.file_name or "").strip() or "upload.bin"
+    return (raw, name)
 
 
 @app.post("/chat", response_model=ChatResponse)
@@ -140,6 +176,7 @@ async def chat(request: Request):
             raise HTTPException(status_code=422, detail=str(exc)) from exc
         message = parsed.message.strip()
         history = _normalize_history(parsed.history)
+        uploaded = _decode_optional_base64_file(parsed)
 
     buf = io.StringIO()
     try:

@@ -182,8 +182,17 @@ def _build_chat_messages(
         )
     messages.extend(chat_history[-8:])
     if tool_results:
+        upload_hint = ""
+        for tr in tool_results:
+            if tr.get("tool") == "virustotal_file_report":
+                fn = tr.get("filename") or "unknown"
+                upload_hint = (
+                    f"\nNote: The server already scanned an uploaded file ({fn!r}). "
+                    "The JSON block above is that scan — do not say no file was attached.\n"
+                )
+                break
         user_prompt = (
-            f"User question:\n{question}\n\n"
+            f"User question:\n{question}{upload_hint}\n"
             "Use the external scan results in the system message for URLs and/or uploaded files."
         )
     else:
