@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import json
+import base64
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -17,6 +19,7 @@ Use only the provided context when stating specific facts.
 If the context is insufficient, say what is missing and give general safe guidance.
 Never provide instructions for harmful, illegal, or abusive actions.
 Prefer step-by-step defensive advice and concrete examples.
+Prefer shorter and precise answers.
 """
 
 
@@ -37,6 +40,7 @@ class AppConfig:
     ollama_retries: int
     ollama_stream: bool
     max_context_chars: int
+    virustotal_api_key: str
 
 
 def load_config() -> AppConfig:
@@ -49,6 +53,8 @@ def load_config() -> AppConfig:
             "Point CHUNKS_PATH to your local chunks JSONL file."
         )
 
+    ollama_url = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").strip().rstrip("/")
+
     return AppConfig(
         chunks_path=chunks_path,
         top_k=int(os.getenv("TOP_K", "5")),
@@ -56,7 +62,7 @@ def load_config() -> AppConfig:
             "EMBEDDING_MODEL",
             "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         ),
-        ollama_url=os.getenv("OLLAMA_URL", "http://127.0.0.1:11434"),
+        ollama_url=ollama_url,
         ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
         ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "2048")),
         ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "220")),
@@ -68,6 +74,7 @@ def load_config() -> AppConfig:
         ollama_retries=int(os.getenv("OLLAMA_RETRIES", "2")),
         ollama_stream=os.getenv("OLLAMA_STREAM", "false").lower() in {"1", "true", "yes"},
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
+        virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY", "").strip(),
     )
 
 
@@ -129,11 +136,101 @@ def build_context_block(matches: list[dict[str, Any]], max_chars: int) -> str:
     return "\n".join(parts).strip()
 
 
+def extract_urls(text: str) -> list[str]:
+    urls = re.findall(r"https?://[^\s)>\"]+", text)
+    unique: list[str] = []
+    seen: set[str] = set()
+    for url in urls:
+        cleaned = url.rstrip(".,;:!?)")
+        if cleaned not in seen:
+            seen.add(cleaned)
+            unique.append(cleaned)
+    return unique
+
+
+def _vt_url_id(url: str) -> str:
+    raw = url.encode("utf-8")
+    encoded = base64.urlsafe_b64encode(raw).decode("ascii")
+    return encoded.rstrip("=")
+
+
+def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
+    if not cfg.virustotal_api_key:
+        return {
+            "tool": "virustotal_url_report",
+            "ok": False,
+            "error": "Missing VIRUSTOTAL_API_KEY in .env",
+            "url": url,
+        }
+
+    headers = {"x-apikey": cfg.virustotal_api_key}
+    url_id = _vt_url_id(url)
+    api_url = f"https://www.virustotal.com/api/v3/urls/{url_id}"
+    response = requests.get(api_url, headers=headers, timeout=40)
+    if response.status_code == 404:
+        submit = requests.post(
+            "https://www.virustotal.com/api/v3/urls",
+            headers=headers,
+            data={"url": url},
+            timeout=40,
+        )
+        submit.raise_for_status()
+        submit_body = submit.json()
+        analysis_id = (submit_body.get("data") or {}).get("id", "")
+        return {
+            "tool": "virustotal_url_report",
+            "ok": True,
+            "url": url,
+            "status": "submitted_for_analysis",
+            "analysis_id": analysis_id,
+            "note": "URL submitted to VirusTotal. Ask again in a few seconds for final verdict.",
+        }
+
+    response.raise_for_status()
+    body = response.json()
+    attrs = ((body.get("data") or {}).get("attributes") or {})
+    stats = attrs.get("last_analysis_stats") or {}
+    return {
+        "tool": "virustotal_url_report",
+        "ok": True,
+        "url": url,
+        "reputation": attrs.get("reputation"),
+        "categories": attrs.get("categories", {}),
+        "last_analysis_date": attrs.get("last_analysis_date"),
+        "last_analysis_stats": {
+            "malicious": stats.get("malicious", 0),
+            "suspicious": stats.get("suspicious", 0),
+            "harmless": stats.get("harmless", 0),
+            "undetected": stats.get("undetected", 0),
+            "timeout": stats.get("timeout", 0),
+        },
+    }
+
+
+def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
+    tool_results: list[dict[str, Any]] = []
+    urls = extract_urls(question)
+    if urls:
+        for url in urls[:3]:
+            try:
+                result = tool_virustotal_url_report(cfg, url)
+            except RequestException as exc:
+                result = {
+                    "tool": "virustotal_url_report",
+                    "ok": False,
+                    "url": url,
+                    "error": str(exc),
+                }
+            tool_results.append(result)
+    return tool_results
+
+
 def ask_ollama(
     cfg: AppConfig,
     question: str,
     context_block: str,
     chat_history: list[dict[str, str]],
+    tool_results: list[dict[str, Any]] | None = None,
 ) -> str:
     def extract_text(payload: dict[str, Any]) -> str:
         message = payload.get("message", {}) or {}
@@ -152,8 +249,12 @@ def ask_ollama(
         "Use the context below to answer the question.\n\n"
         "CONTEXT:\n"
         f"{context_block}\n\n"
+        "TOOL RESULTS (trusted external checks, JSON):\n"
+        f"{json.dumps(tool_results or [], ensure_ascii=False)}\n\n"
         "QUESTION:\n"
         f"{question}\n\n"
+        "If TOOL RESULTS include VirusTotal data, summarize risk clearly "
+        "(malicious/suspicious counts, confidence, and practical next step).\n"
         "Answer in Polish unless the user asks otherwise."
     )
     messages.append({"role": "user", "content": user_prompt})
@@ -317,9 +418,10 @@ def main() -> None:
 
         matches = retrieve_context(rows, index_embeddings, embedder, cfg, question)
         context_block = build_context_block(matches, cfg.max_context_chars)
+        tool_results = maybe_run_tools(cfg, question)
         try:
             ensure_gpu_only_or_raise(cfg)
-            answer = ask_ollama(cfg, question, context_block, history)
+            answer = ask_ollama(cfg, question, context_block, history, tool_results=tool_results)
         except RuntimeError as exc:
             print(f"\nAssistant> {exc}\n")
             continue
