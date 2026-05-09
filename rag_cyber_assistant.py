@@ -85,7 +85,7 @@ def load_config() -> AppConfig:
         ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
         ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
-        ollama_require_gpu_only=os.getenv("OLLAMA_REQUIRE_GPU_ONLY", "true").lower() in {"1", "true", "yes"},
+        ollama_require_gpu_only=os.getenv("OLLAMA_REQUIRE_GPU_ONLY", "false").lower() in {"1", "true", "yes"},
         ollama_timeout_secs=int(os.getenv("OLLAMA_TIMEOUT_SECS", "300")),
         ollama_retries=int(os.getenv("OLLAMA_RETRIES", "2")),
         ollama_stream=os.getenv("OLLAMA_STREAM", "false").lower() in {"1", "true", "yes"},
