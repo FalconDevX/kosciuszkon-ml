@@ -13,3 +13,20 @@ services:
       - .env
     volumes:
       - ./:/app
+
+  # HTTP API for the FastAPI backend: POST /chat (same pipeline as CLI; uses .env OLLAMA_URL etc.).
+  rag-api:
+    build: .
+    container_name: rag-cyber-assistant-api
+    working_dir: /app
+    command: uvicorn rag_api:app --host 0.0.0.0 --port 8080
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./:/app

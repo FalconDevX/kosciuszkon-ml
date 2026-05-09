@@ -666,6 +666,32 @@ def ask_llm(
     return ask_ollama(cfg, messages)
 
 
+def chat_turn(
+    cfg: AppConfig,
+    rows: list[dict[str, Any]],
+    bm25: BM25Okapi,
+    question: str,
+    history: list[dict[str, str]],
+) -> str:
+    """
+    Single user question → answer using the same pipeline as CLI (BM25 + tools + LLM).
+    Mutates history by appending user + assistant messages on success.
+    """
+    matches = retrieve_context_bm25(rows, bm25, cfg, question)
+    context_block = build_context_block(matches, cfg.max_context_chars)
+    tool_results = maybe_run_tools(cfg, question)
+    answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
+    history.append({"role": "user", "content": question})
+    history.append({"role": "assistant", "content": answer})
+    return answer
+
+
+def model_label(cfg: AppConfig) -> str:
+    if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
+        return cfg.openai_model
+    return cfg.ollama_model
+
+
 def main() -> None:
     cfg = load_config()
     _validate_llm_config(cfg)
