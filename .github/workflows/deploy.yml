@@ -1,0 +1,41 @@
+# Autodeploy: SSH na serwer + git pull + docker compose.
+#
+# W GitHub: Settings → Secrets and variables → Actions → New repository secret
+#   DEPLOY_KEY   — prywatny klucz SSH (cała zawartość pliku, np. -----BEGIN ... PRIVATE KEY-----)
+#   DEPLOY_HOST  — host (np. 203.0.113.10 lub vps.example.com)
+#   DEPLOY_USER  — użytkownik SSH (np. ubuntu, deploy)
+#   DEPLOY_PATH  — katalog z repo na serwerze (np. /home/ubuntu/kosciuszkon-ml)
+# Opcjonalnie: DEPLOY_PORT — port SSH (domyślnie 22); wtedy dodaj też w with: port (patrz dokumentacja appleboy/ssh-action).
+#
+# Na serwerze: w ~/.ssh/authorized_keys dodaj klucz publiczny pasujący do DEPLOY_KEY.
+
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure SSH and deploy
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script_stop: true
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            git fetch origin main
+            git reset --hard origin/main
+            docker compose pull 2>/dev/null || true
+            docker compose up -d --build

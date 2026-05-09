@@ -1,3 +1,5 @@
+# GPU: this image is CPU-only (BM25 + HTTP). For LLM GPU, run Ollama with CUDA/ROCm on the
+# host and set OLLAMA_NUM_GPU in .env. For embedding precompute with GPU, run save_embeddings.py on the host.
 services:
   rag-cyber-assistant:
     build: .
@@ -9,7 +11,5 @@ services:
     tty: true
     env_file:
       - .env
-    environment:
-      OLLAMA_URL: http://127.0.0.1:11434
     volumes:
       - ./:/app

@@ -38,7 +38,7 @@ Analysis:
 Recommendation:
 - short recommendation
 
-Answer in Polish unless the user asks otherwise.
+Answer in Polish language unless the user asks otherwise.
 """
 
 
@@ -59,12 +59,14 @@ class AppConfig:
     ollama_num_ctx: int
     ollama_num_predict: int
     ollama_temperature: float
+    ollama_num_gpu: int
     ollama_num_thread: int
     ollama_timeout_secs: int
     ollama_retries: int
     ollama_stream: bool
     max_context_chars: int
     virustotal_api_key: str
+    force_gpu: bool
 
 
 def load_config() -> AppConfig:
@@ -95,12 +97,14 @@ def load_config() -> AppConfig:
         ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "1024")),
         ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "128")),
         ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
+        ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
         ollama_timeout_secs=int(os.getenv("OLLAMA_TIMEOUT_SECS", "300")),
         ollama_retries=int(os.getenv("OLLAMA_RETRIES", "2")),
         ollama_stream=os.getenv("OLLAMA_STREAM", "true").lower() in {"1", "true", "yes"},
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
         virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY", "").strip(),
+        force_gpu=os.getenv("FORCE_GPU", "false").lower() in {"1", "true", "yes"},
     )
 
 
@@ -111,6 +115,13 @@ def _validate_llm_config(cfg: AppConfig) -> None:
                 "LLM_BACKEND is OpenAI-compatible but OPENAI_BASE_URL is empty. "
                 "Example: OPENAI_BASE_URL=https://matnowa3-qwen.hf.space/v1"
             )
+        if cfg.force_gpu:
+            raise ValueError(
+                "FORCE_GPU=1 only applies to LLM_BACKEND=ollama (local GPU). "
+                "Remote OpenAI-compatible APIs use the provider's hardware — unset FORCE_GPU."
+            )
+    if cfg.force_gpu and cfg.llm_backend == "ollama" and cfg.ollama_num_gpu <= 0:
+        raise ValueError("FORCE_GPU=1 requires OLLAMA_NUM_GPU > 0.")
 
 
 def _build_chat_messages(
@@ -446,6 +457,65 @@ def build_tool_evidence(tool_results: list[dict[str, Any]] | None) -> str:
     return json.dumps(tool_results, ensure_ascii=False, indent=2)
 
 
+def ensure_ollama_gpu_or_raise(cfg: AppConfig) -> None:
+    if not cfg.force_gpu:
+        return
+    try:
+        response = requests.get(f"{cfg.ollama_url}/api/ps", timeout=20)
+        response.raise_for_status()
+        body = response.json()
+    except RequestException as exc:
+        raise RuntimeError(
+            "FORCE_GPU: cannot query Ollama /api/ps to verify GPU usage."
+        ) from exc
+
+    models = body.get("models", [])
+    if not models:
+        return
+
+    target = None
+    for model in models:
+        model_name = model.get("model", "") or model.get("name", "")
+        if model_name == cfg.ollama_model:
+            target = model
+            break
+    if target is None:
+        target = models[0]
+
+    processor = (target.get("processor") or "").strip().lower()
+    if not processor:
+        return
+    if "cpu" in processor and "gpu" not in processor:
+        raise RuntimeError(
+            f"FORCE_GPU=1 but Ollama reports processor='{processor}'. "
+            "Use GPU-enabled Ollama, NVIDIA/ROCm drivers, and ensure the model fits in VRAM."
+        )
+
+
+def warmup_ollama_gpu_probe(cfg: AppConfig) -> None:
+    """Prime the model so /api/ps reports processor; then enforce FORCE_GPU."""
+    ollama_options: dict[str, Any] = {
+        "num_ctx": min(cfg.ollama_num_ctx, 512),
+        "num_predict": 1,
+        "temperature": 0,
+        "num_gpu": cfg.ollama_num_gpu,
+        "num_thread": cfg.ollama_num_thread,
+    }
+    response = requests.post(
+        f"{cfg.ollama_url}/api/chat",
+        json={
+            "model": cfg.ollama_model,
+            "messages": [{"role": "user", "content": "."}],
+            "stream": False,
+            "keep_alive": os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+            "options": ollama_options,
+        },
+        timeout=cfg.ollama_timeout_secs,
+    )
+    response.raise_for_status()
+    ensure_ollama_gpu_or_raise(cfg)
+
+
 def ask_ollama(
     cfg: AppConfig,
     messages: list[dict[str, str]],
@@ -464,12 +534,14 @@ def ask_ollama(
         "num_ctx": cfg.ollama_num_ctx,
         "num_predict": cfg.ollama_num_predict,
         "temperature": cfg.ollama_temperature,
+        "num_gpu": cfg.ollama_num_gpu,
         "num_thread": cfg.ollama_num_thread,
     }
 
     last_error = None
     for attempt in range(1, cfg.ollama_retries + 1):
         try:
+            ensure_ollama_gpu_or_raise(cfg)
             response = requests.post(
                 f"{cfg.ollama_url}/api/chat",
                 json={
@@ -571,7 +643,16 @@ def main() -> None:
     if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
         print(f"LLM: OpenAI-compatible {_openai_chat_url(cfg)} model={cfg.openai_model}")
     else:
-        print(f"LLM: Ollama {cfg.ollama_model} at {cfg.ollama_url}")
+        print(
+            f"LLM: Ollama {cfg.ollama_model} at {cfg.ollama_url} "
+            f"(num_gpu={cfg.ollama_num_gpu} — use GPU on host if Ollama has CUDA/ROCm)"
+        )
+        if cfg.force_gpu:
+            print("FORCE_GPU=1: probing Ollama and requiring GPU (see /api/ps).")
+            try:
+                warmup_ollama_gpu_probe(cfg)
+            except (RequestException, RuntimeError) as exc:
+                raise SystemExit(f"FORCE_GPU startup check failed: {exc}") from exc
     print(
         f"LLM timeout={cfg.ollama_timeout_secs}s retries={cfg.ollama_retries} stream={cfg.ollama_stream}"
     )

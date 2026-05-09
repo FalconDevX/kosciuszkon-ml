@@ -2,6 +2,9 @@
 """Precompute sentence embeddings for chunks JSONL -> embeddings.npy (run once).
 
 Install: pip install -r requirements-embeddings.txt
+
+GPU: CUDA or Apple MPS when available. EMBED_DEVICE=cuda|mps|cpu|auto
+EMBED_FORCE_GPU=1: require CUDA or MPS (exit otherwise).
 """
 from __future__ import annotations
 
@@ -10,8 +13,41 @@ import os
 from pathlib import Path
 
 import numpy as np
+import torch
 from dotenv import load_dotenv
 from sentence_transformers import SentenceTransformer
+
+
+def pick_device() -> str:
+    """Prefer GPU when PyTorch can use it."""
+    embed_force = os.getenv("EMBED_FORCE_GPU", "false").lower() in {"1", "true", "yes"}
+    if embed_force:
+        if torch.cuda.is_available():
+            return "cuda"
+        if torch.backends.mps.is_available():
+            return "mps"
+        raise SystemExit(
+            "EMBED_FORCE_GPU=1 but neither CUDA nor MPS is available. "
+            "Install CUDA PyTorch or run on Apple Silicon with MPS."
+        )
+
+    forced = os.getenv("EMBED_DEVICE", "auto").strip().lower()
+    if forced == "cpu":
+        return "cpu"
+    if forced == "cuda":
+        if torch.cuda.is_available():
+            return "cuda"
+        raise SystemExit("EMBED_DEVICE=cuda but CUDA is not available.")
+    if forced == "mps":
+        if torch.backends.mps.is_available():
+            return "mps"
+        raise SystemExit("EMBED_DEVICE=mps but MPS is not available.")
+    # auto
+    if torch.cuda.is_available():
+        return "cuda"
+    if torch.backends.mps.is_available():
+        return "mps"
+    return "cpu"
 
 
 def main() -> None:
@@ -38,14 +74,17 @@ def main() -> None:
     if not texts:
         raise SystemExit("No chunks in file.")
 
+    device = pick_device()
     print(f"Model: {model_name}")
+    print(f"Device: {device}")
     print(f"Chunks: {len(texts)}")
-    embedder = SentenceTransformer(model_name)
+    embedder = SentenceTransformer(model_name, device=device)
     vectors = embedder.encode(
         texts,
         batch_size=batch_size,
         show_progress_bar=True,
         normalize_embeddings=True,
+        device=device,
     )
     np.save(out_path, vectors.astype(np.float32))
     meta_path = str(Path(out_path).with_suffix(".meta.json"))
@@ -56,6 +95,7 @@ def main() -> None:
                 "embeddings_path": str(Path(out_path).resolve()),
                 "count": len(texts),
                 "embedding_model": model_name,
+                "device": device,
                 "dtype": "float32",
             },
             indent=2,
