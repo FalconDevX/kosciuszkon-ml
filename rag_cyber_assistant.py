@@ -35,6 +35,7 @@ class AppConfig:
     ollama_require_gpu_only: bool
     ollama_timeout_secs: int
     ollama_retries: int
+    ollama_stream: bool
     max_context_chars: int
 
 
@@ -65,6 +66,7 @@ def load_config() -> AppConfig:
         ollama_require_gpu_only=os.getenv("OLLAMA_REQUIRE_GPU_ONLY", "true").lower() in {"1", "true", "yes"},
         ollama_timeout_secs=int(os.getenv("OLLAMA_TIMEOUT_SECS", "300")),
         ollama_retries=int(os.getenv("OLLAMA_RETRIES", "2")),
+        ollama_stream=os.getenv("OLLAMA_STREAM", "false").lower() in {"1", "true", "yes"},
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
     )
 
@@ -133,6 +135,17 @@ def ask_ollama(
     context_block: str,
     chat_history: list[dict[str, str]],
 ) -> str:
+    def extract_text(payload: dict[str, Any]) -> str:
+        message = payload.get("message", {}) or {}
+        # Some Ollama/model combinations emit text under different keys.
+        return (
+            message.get("content")
+            or message.get("reasoning_content")
+            or payload.get("response")
+            or payload.get("output_text")
+            or ""
+        )
+
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     messages.extend(chat_history[-8:])
     user_prompt = (
@@ -153,7 +166,7 @@ def ask_ollama(
                 json={
                     "model": cfg.ollama_model,
                     "messages": messages,
-                    "stream": True,
+                    "stream": cfg.ollama_stream,
                     "options": {
                         "num_ctx": cfg.ollama_num_ctx,
                         "num_predict": cfg.ollama_num_predict,
@@ -168,17 +181,26 @@ def ask_ollama(
             response.raise_for_status()
             full_text = ""
             print("\nAssistant> ", end="", flush=True)
-            for line in response.iter_lines(decode_unicode=True):
-                if not line:
-                    continue
-                body = json.loads(line)
-                message = body.get("message", {})
-                token = message.get("content", "")
-                if token:
-                    full_text += token
-                    print(token, end="", flush=True)
-                if body.get("done"):
-                    break
+            if cfg.ollama_stream:
+                for line in response.iter_lines(decode_unicode=True):
+                    if not line:
+                        continue
+                    try:
+                        body = json.loads(line)
+                    except json.JSONDecodeError:
+                        # Ignore non-JSON stream lines and keep consuming output.
+                        continue
+                    token = extract_text(body)
+                    if token:
+                        full_text += token
+                        print(token, end="", flush=True)
+                    if body.get("done"):
+                        break
+            else:
+                body = response.json()
+                full_text = extract_text(body)
+                if full_text:
+                    print(full_text, end="", flush=True)
             print("\n")
             if full_text.strip():
                 return full_text.strip()
@@ -202,12 +224,13 @@ def ask_ollama(
             )
             fallback.raise_for_status()
             fallback_body = fallback.json()
-            fallback_text = (fallback_body.get("message", {}) or {}).get("content", "")
+            fallback_text = extract_text(fallback_body)
             if fallback_text and fallback_text.strip():
                 return fallback_text.strip()
             raise RuntimeError(
                 "Ollama returned an empty response. Try reducing load "
-                "(smaller model, lower num_ctx/num_predict) or disable GPU-only enforcement."
+                "(smaller model, lower num_ctx/num_predict), set OLLAMA_STREAM=false, "
+                "or disable GPU-only enforcement."
             )
         except ReadTimeout as exc:
             last_error = exc
@@ -280,7 +303,7 @@ def main() -> None:
     print(f"Local index rows={len(rows)}")
     print(f"Ollama model: {cfg.ollama_model} at {cfg.ollama_url}")
     print(
-        f"Ollama timeout={cfg.ollama_timeout_secs}s retries={cfg.ollama_retries}"
+        f"Ollama timeout={cfg.ollama_timeout_secs}s retries={cfg.ollama_retries} stream={cfg.ollama_stream}"
     )
     print("Type 'exit' to quit.\n")
 
