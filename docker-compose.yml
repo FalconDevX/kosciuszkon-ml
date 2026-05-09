@@ -2,6 +2,7 @@ services:
   rag-cyber-assistant:
     build: .
     container_name: rag-cyber-assistant
+    network_mode: host
     working_dir: /app
     command: python3 rag_cyber_assistant.py
     stdin_open: true
@@ -10,7 +11,5 @@ services:
       - .env
     environment:
       OLLAMA_URL: http://127.0.0.1:11434
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - ./:/app
