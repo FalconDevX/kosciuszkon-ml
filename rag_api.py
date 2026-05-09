@@ -23,9 +23,10 @@ import os
 from contextlib import asynccontextmanager, redirect_stdout
 from typing import Any
 
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 from requests.exceptions import RequestException
+from starlette.datastructures import UploadFile
 
 from rag_cyber_assistant import (
     AppConfig,
