@@ -37,6 +37,8 @@ Analysis:
 
 Recommendation:
 - short recommendation
+
+Answer in Polish unless the user asks otherwise.
 """
 
 
@@ -48,8 +50,12 @@ def tokenize_bm25(text: str) -> list[str]:
 class AppConfig:
     chunks_path: str
     top_k: int
+    llm_backend: str
     ollama_url: str
     ollama_model: str
+    openai_base_url: str
+    openai_model: str
+    openai_api_key: str
     ollama_num_ctx: int
     ollama_num_predict: int
     ollama_temperature: float
@@ -72,12 +78,20 @@ def load_config() -> AppConfig:
         )
 
     ollama_url = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").strip().rstrip("/")
+    llm_backend = os.getenv("LLM_BACKEND", "ollama").strip().lower()
+    openai_base_url = os.getenv("OPENAI_BASE_URL", "").strip().rstrip("/")
+    openai_model = os.getenv("OPENAI_MODEL", "").strip() or os.getenv("OLLAMA_MODEL", "qwen2.5:3b").strip()
+    openai_api_key = os.getenv("OPENAI_API_KEY", "").strip()
 
     return AppConfig(
         chunks_path=chunks_path,
         top_k=int(os.getenv("TOP_K", "5")),
+        llm_backend=llm_backend,
         ollama_url=ollama_url,
         ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
+        openai_base_url=openai_base_url,
+        openai_model=openai_model,
+        openai_api_key=openai_api_key,
         ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "1024")),
         ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "128")),
         ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
@@ -88,6 +102,166 @@ def load_config() -> AppConfig:
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
         virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY", "").strip(),
     )
+
+
+def _validate_llm_config(cfg: AppConfig) -> None:
+    if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
+        if not cfg.openai_base_url:
+            raise ValueError(
+                "LLM_BACKEND is OpenAI-compatible but OPENAI_BASE_URL is empty. "
+                "Example: OPENAI_BASE_URL=https://matnowa3-qwen.hf.space/v1"
+            )
+
+
+def _build_chat_messages(
+    question: str,
+    context_block: str,
+    chat_history: list[dict[str, str]],
+    tool_results: list[dict[str, Any]] | None,
+) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    if tool_results:
+        messages.append(
+            {
+                "role": "system",
+                "content": (
+                    "TOOL EVIDENCE (trusted external data, highest priority):\n"
+                    f"{build_tool_evidence(tool_results)}\n\n"
+                    "Rules:\n"
+                    "1) Treat TOOL EVIDENCE as factual input.\n"
+                    "2) Never say you cannot access or verify the link when tool evidence exists.\n"
+                    "3) If tool evidence conflicts with user claims, explain the conflict.\n"
+                    "4) Use VirusTotal stats directly; do not reinterpret them.\n"
+                ),
+            }
+        )
+    messages.extend(chat_history[-8:])
+    if tool_results:
+        user_prompt = (
+            "QUESTION:\n"
+            f"{question}\n\n"
+            "Use only tool evidence for URL safety verdict."
+        )
+    else:
+        user_prompt = (
+            "CONTEXT:\n"
+            f"{context_block}\n\n"
+            "QUESTION:\n"
+            f"{question}\n\n"
+            "Answer in Polish unless the user asks otherwise."
+        )
+    messages.append({"role": "user", "content": user_prompt})
+    return messages
+
+
+def _openai_chat_url(cfg: AppConfig) -> str:
+    return f"{cfg.openai_base_url}/chat/completions"
+
+
+def _openai_headers(cfg: AppConfig) -> dict[str, str]:
+    headers = {"Content-Type": "application/json"}
+    if cfg.openai_api_key:
+        headers["Authorization"] = f"Bearer {cfg.openai_api_key}"
+    return headers
+
+
+def ask_openai_compatible(
+    cfg: AppConfig,
+    messages: list[dict[str, str]],
+) -> str:
+    url = _openai_chat_url(cfg)
+    headers = _openai_headers(cfg)
+    payload: dict[str, Any] = {
+        "model": cfg.openai_model,
+        "messages": messages,
+        "temperature": cfg.ollama_temperature,
+        "max_tokens": cfg.ollama_num_predict,
+        "stream": cfg.ollama_stream,
+    }
+
+    last_error = None
+    for attempt in range(1, cfg.ollama_retries + 1):
+        try:
+            response = requests.post(
+                url,
+                headers=headers,
+                json=payload,
+                timeout=cfg.ollama_timeout_secs,
+                stream=bool(cfg.ollama_stream),
+            )
+            response.raise_for_status()
+            full_text = ""
+            print("\nAssistant> ", end="", flush=True)
+            if cfg.ollama_stream:
+                for line in response.iter_lines(decode_unicode=True):
+                    if not line:
+                        continue
+                    if isinstance(line, bytes):
+                        line = line.decode("utf-8", errors="replace")
+                    if line.startswith("data:"):
+                        line = line[5:].strip()
+                    if line == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    choices = chunk.get("choices") or []
+                    if not choices:
+                        continue
+                    delta = (choices[0].get("delta") or {}) if isinstance(choices[0], dict) else {}
+                    piece = delta.get("content") or ""
+                    if piece:
+                        full_text += piece
+                        print(piece, end="", flush=True)
+                print("\n")
+            else:
+                body = response.json()
+                choices = body.get("choices") or []
+                if choices:
+                    msg = choices[0].get("message") or {}
+                    full_text = (msg.get("content") or "").strip()
+                if full_text:
+                    print(full_text, end="", flush=True)
+                print("\n")
+
+            if full_text.strip():
+                return full_text.strip()
+
+            fallback = requests.post(
+                url,
+                headers=headers,
+                json={
+                    "model": cfg.openai_model,
+                    "messages": messages,
+                    "temperature": cfg.ollama_temperature,
+                    "max_tokens": cfg.ollama_num_predict,
+                    "stream": False,
+                },
+                timeout=cfg.ollama_timeout_secs,
+            )
+            fallback.raise_for_status()
+            fb = fallback.json()
+            fchoices = fb.get("choices") or []
+            if fchoices:
+                fmsg = fchoices[0].get("message") or {}
+                fb_text = (fmsg.get("content") or "").strip()
+                if fb_text:
+                    return fb_text
+            raise RuntimeError("OpenAI-compatible API returned an empty response.")
+        except ReadTimeout as exc:
+            last_error = exc
+            print(
+                f"[warn] LLM timed out (attempt {attempt}/{cfg.ollama_retries}, "
+                f"timeout={cfg.ollama_timeout_secs}s)."
+            )
+        except RequestException as exc:
+            last_error = exc
+            print(f"[warn] LLM request failed (attempt {attempt}/{cfg.ollama_retries}): {exc}")
+
+    raise RuntimeError(
+        "OpenAI-compatible LLM failed after retries. Check OPENAI_BASE_URL, OPENAI_MODEL, and network."
+    ) from last_error
 
 
 def load_local_chunks(chunks_path: str) -> list[dict[str, Any]]:
@@ -274,10 +448,7 @@ def build_tool_evidence(tool_results: list[dict[str, Any]] | None) -> str:
 
 def ask_ollama(
     cfg: AppConfig,
-    question: str,
-    context_block: str,
-    chat_history: list[dict[str, str]],
-    tool_results: list[dict[str, Any]] | None = None,
+    messages: list[dict[str, str]],
 ) -> str:
     def extract_text(payload: dict[str, Any]) -> str:
         message = payload.get("message", {}) or {}
@@ -288,39 +459,6 @@ def ask_ollama(
             or payload.get("output_text")
             or ""
         )
-
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
-    if tool_results:
-        messages.append(
-            {
-                "role": "system",
-                "content": (
-                    "TOOL EVIDENCE (trusted external data, highest priority):\n"
-                    f"{build_tool_evidence(tool_results)}\n\n"
-                    "Rules:\n"
-                    "1) Treat TOOL EVIDENCE as factual input.\n"
-                    "2) Never say you cannot access or verify the link when tool evidence exists.\n"
-                    "3) If tool evidence conflicts with user claims, explain the conflict.\n"
-                    "4) Use VirusTotal stats directly; do not reinterpret them.\n"
-                ),
-            }
-        )
-    messages.extend(chat_history[-8:])
-    if tool_results:
-        user_prompt = (
-            "QUESTION:\n"
-            f"{question}\n\n"
-            "Use only tool evidence for URL safety verdict."
-        )
-    else:
-        user_prompt = (
-            "CONTEXT:\n"
-            f"{context_block}\n\n"
-            "QUESTION:\n"
-            f"{question}\n\n"
-            "Answer in Polish unless the user asks otherwise."
-        )
-    messages.append({"role": "user", "content": user_prompt})
 
     ollama_options: dict[str, Any] = {
         "num_ctx": cfg.ollama_num_ctx,
@@ -406,8 +544,22 @@ def ask_ollama(
     ) from last_error
 
 
+def ask_llm(
+    cfg: AppConfig,
+    question: str,
+    context_block: str,
+    chat_history: list[dict[str, str]],
+    tool_results: list[dict[str, Any]] | None = None,
+) -> str:
+    messages = _build_chat_messages(question, context_block, chat_history, tool_results)
+    if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
+        return ask_openai_compatible(cfg, messages)
+    return ask_ollama(cfg, messages)
+
+
 def main() -> None:
     cfg = load_config()
+    _validate_llm_config(cfg)
     print("Retrieval: BM25 (no sentence-transformers / torch)")
     print(f"Loading local chunks: {cfg.chunks_path}")
     rows = load_local_chunks(cfg.chunks_path)
@@ -416,9 +568,12 @@ def main() -> None:
     bm25 = build_bm25_index(rows)
 
     print(f"Local index rows={len(rows)}")
-    print(f"Ollama model: {cfg.ollama_model} at {cfg.ollama_url}")
+    if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
+        print(f"LLM: OpenAI-compatible {_openai_chat_url(cfg)} model={cfg.openai_model}")
+    else:
+        print(f"LLM: Ollama {cfg.ollama_model} at {cfg.ollama_url}")
     print(
-        f"Ollama timeout={cfg.ollama_timeout_secs}s retries={cfg.ollama_retries} stream={cfg.ollama_stream}"
+        f"LLM timeout={cfg.ollama_timeout_secs}s retries={cfg.ollama_retries} stream={cfg.ollama_stream}"
     )
     print("Type 'exit' to quit.\n")
 
@@ -436,7 +591,7 @@ def main() -> None:
         if tool_results:
             print_tool_results(tool_results)
         try:
-            answer = ask_ollama(cfg, question, context_block, history, tool_results=tool_results)
+            answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
         except RuntimeError as exc:
             print(f"\nAssistant> {exc}\n")
             continue
