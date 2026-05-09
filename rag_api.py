@@ -2,15 +2,21 @@
 HTTP API for rag_cyber_assistant — backend should call this instead of Ollama directly.
 
 Run: uvicorn rag_api:app --host 0.0.0.0 --port 8080
+
+Chat:
+- POST /chat with Content-Type: application/json → ChatRequest body (same as before).
+- POST /chat with multipart/form-data → fields: message (str), history (optional JSON string),
+  file (optional) → VirusTotal file scan via same VT API key as URL checks.
 """
 
 from __future__ import annotations
 
 import io
+import json
 from contextlib import asynccontextmanager, redirect_stdout
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
 from requests.exceptions import RequestException
 
@@ -74,8 +80,22 @@ async def health():
     return {"status": "ok" if ok else "starting", "chunks": len(_rows or [])}
 
 
+def _normalize_history(raw: Any) -> list[dict[str, str]]:
+    if not isinstance(raw, list):
+        return []
+    out: list[dict[str, str]] = []
+    for h in raw[-16:]:
+        if not isinstance(h, dict):
+            continue
+        role = h.get("role")
+        content = h.get("content")
+        if role in {"user", "assistant"} and isinstance(content, str) and content.strip():
+            out.append({"role": role, "content": content.strip()})
+    return out
+
+
 @app.post("/chat", response_model=ChatResponse)
-async def chat(body: ChatRequest):
+async def chat(request: Request):
     if _cfg is None or _rows is None or _bm25 is None:
         raise HTTPException(status_code=503, detail="RAG index not ready")
 
@@ -83,13 +103,48 @@ async def chat(body: ChatRequest):
     rows = _rows
     bm25_index = _bm25
 
-    history = [
-        h for h in body.history[-16:] if h.get("role") in {"user", "assistant"} and h.get("content")
-    ]
+    uploaded: tuple[bytes, str] | None = None
+    ct = (request.headers.get("content-type") or "").lower()
+
+    if "multipart/form-data" in ct:
+        form = await request.form()
+        msg_val = form.get("message")
+        if msg_val is None or not str(msg_val).strip():
+            raise HTTPException(status_code=422, detail="message is required")
+        message = str(msg_val).strip()
+
+        hist_val = form.get("history")
+        hist_raw = hist_val if isinstance(hist_val, str) else "[]"
+        try:
+            history_payload = json.loads(hist_raw or "[]")
+        except json.JSONDecodeError as exc:
+            raise HTTPException(status_code=422, detail=f"invalid history JSON: {exc}") from exc
+        history = _normalize_history(history_payload)
+
+        up = form.get("file")
+        if up is not None:
+            if not isinstance(up, UploadFile):
+                raise HTTPException(status_code=422, detail="file must be an upload")
+            raw_bytes = await up.read()
+            if raw_bytes:
+                fname = up.filename or "upload.bin"
+                uploaded = (raw_bytes, fname)
+    else:
+        try:
+            body = await request.json()
+        except json.JSONDecodeError as exc:
+            raise HTTPException(status_code=422, detail="invalid JSON body") from exc
+        try:
+            parsed = ChatRequest.model_validate(body)
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+        message = parsed.message.strip()
+        history = _normalize_history(parsed.history)
+
     buf = io.StringIO()
     try:
         with redirect_stdout(buf):
-            answer = chat_turn(cfg, rows, bm25_index, body.message.strip(), history)
+            answer = chat_turn(cfg, rows, bm25_index, message, history, uploaded_file=uploaded)
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 

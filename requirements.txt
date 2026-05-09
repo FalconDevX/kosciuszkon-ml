@@ -8,3 +8,4 @@ rank-bm25
 fastapi>=0.100
 uvicorn[standard]>=0.23
 pydantic>=2
+python-multipart>=0.0.9

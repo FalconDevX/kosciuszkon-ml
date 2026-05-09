@@ -3,6 +3,7 @@ import os
 import sys
 import io
 import json
+import hashlib
 import base64
 import re
 import heapq
@@ -63,6 +64,7 @@ Your goals:
 Rules:
 - prioritize defensive cybersecurity
 - never assist offensive or illegal actions
+- off-topic, abusive, or harassing input: refuse in one or two short sentences only — no long sermons or reused CONTEXT dumping
 - if external evidence exists, use it critically
 - do not blindly trust user claims
 - think carefully before answering
@@ -130,7 +132,7 @@ def load_config() -> AppConfig:
         openai_model=openai_model,
         openai_api_key=openai_api_key,
         ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "4096")),
-        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "768")),
+        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "4096")),
         ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.5")),
         ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
@@ -182,7 +184,7 @@ def _build_chat_messages(
     if tool_results:
         user_prompt = (
             f"User question:\n{question}\n\n"
-            "Use the external scan results from the system message when assessing any URLs."
+            "Use the external scan results in the system message for URLs and/or uploaded files."
         )
     else:
         user_prompt = (
@@ -205,90 +207,152 @@ def _openai_headers(cfg: AppConfig) -> dict[str, str]:
     return headers
 
 
-def ask_openai_compatible(
+def _openai_completion_budget(cfg: AppConfig) -> int:
+    """Max output tokens per HF/OpenAI completion round."""
+    override = int(os.getenv("OPENAI_MAX_COMPLETION_TOKENS", "0"))
+    if override > 0:
+        return override
+    return max(cfg.ollama_num_predict, 512)
+
+
+def _openai_single_completion_round(
     cfg: AppConfig,
     messages: list[dict[str, str]],
-) -> str:
+    *,
+    stream: bool,
+    max_tokens: int,
+    print_header: bool,
+) -> tuple[str, str | None]:
+    """One chat/completions call; returns (assistant_text, finish_reason)."""
     url = _openai_chat_url(cfg)
     headers = _openai_headers(cfg)
     payload: dict[str, Any] = {
         "model": cfg.openai_model,
         "messages": messages,
         "temperature": cfg.ollama_temperature,
-        "max_tokens": cfg.ollama_num_predict,
-        "stream": cfg.ollama_stream,
+        "max_tokens": max_tokens,
+        "stream": stream,
     }
 
+    response = requests.post(
+        url,
+        headers=headers,
+        json=payload,
+        timeout=cfg.ollama_timeout_secs,
+        stream=bool(stream),
+    )
+    response.raise_for_status()
+
+    finish_reason: str | None = None
+    full_text = ""
+
+    if stream:
+        if print_header:
+            print("\nAssistant> ", end="", flush=True)
+        for line in response.iter_lines(decode_unicode=True):
+            if not line:
+                continue
+            if isinstance(line, bytes):
+                line = line.decode("utf-8", errors="replace")
+            if line.startswith("data:"):
+                line = line[5:].strip()
+            if line == "[DONE]":
+                break
+            try:
+                chunk = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            choices = chunk.get("choices") or []
+            if not choices:
+                continue
+            ch0 = choices[0] if isinstance(choices[0], dict) else {}
+            fr = ch0.get("finish_reason")
+            if fr:
+                finish_reason = fr
+            delta = ch0.get("delta") or {}
+            piece = delta.get("content") or ""
+            if piece:
+                full_text += piece
+                print(piece, end="", flush=True)
+        print("\n", flush=True)
+    else:
+        body = response.json()
+        choices = body.get("choices") or []
+        if choices:
+            ch0 = choices[0] if isinstance(choices[0], dict) else {}
+            finish_reason = ch0.get("finish_reason")
+            msg = ch0.get("message") or {}
+            full_text = (msg.get("content") or "").strip()
+        if full_text:
+            if print_header:
+                print("\nAssistant> ", end="", flush=True)
+                print(full_text, end="", flush=True)
+                print("\n", flush=True)
+            else:
+                print(full_text, end="", flush=True)
+                print("", flush=True)
+
+    return full_text.strip(), finish_reason
+
+
+def _openai_chat_with_continuation(cfg: AppConfig, messages: list[dict[str, str]]) -> str:
+    """
+    Avoid mid-sentence cuts when the provider stops with finish_reason=length (max_tokens hit).
+    Optional env: OPENAI_CONTINUE_MAX_ROUNDS (default 8).
+    """
+    working: list[dict[str, str]] = [dict(m) for m in messages]
+    budget = _openai_completion_budget(cfg)
+    max_rounds = max(1, int(os.getenv("OPENAI_CONTINUE_MAX_ROUNDS", "8")))
+    aggregated = ""
+
+    for rnd in range(max_rounds):
+        use_stream = bool(cfg.ollama_stream) and rnd == 0
+        print_header = rnd == 0
+
+        text, reason = _openai_single_completion_round(
+            cfg,
+            working,
+            stream=use_stream,
+            max_tokens=budget,
+            print_header=print_header,
+        )
+
+        if not text and rnd == 0:
+            raise RuntimeError("OpenAI-compatible API returned an empty response.")
+
+        aggregated += text
+
+        if reason != "length":
+            break
+
+        if not text.strip():
+            break
+
+        working.append({"role": "assistant", "content": text})
+        working.append(
+            {
+                "role": "user",
+                "content": (
+                    "Your previous reply was cut off due to length. Continue exactly where "
+                    "you stopped — same tone — without repeating what you already said."
+                ),
+            }
+        )
+
+    result = aggregated.strip()
+    if not result:
+        raise RuntimeError("OpenAI-compatible API returned an empty response.")
+    return result
+
+
+def ask_openai_compatible(
+    cfg: AppConfig,
+    messages: list[dict[str, str]],
+) -> str:
     last_error = None
     for attempt in range(1, cfg.ollama_retries + 1):
         try:
-            response = requests.post(
-                url,
-                headers=headers,
-                json=payload,
-                timeout=cfg.ollama_timeout_secs,
-                stream=bool(cfg.ollama_stream),
-            )
-            response.raise_for_status()
-            full_text = ""
-            print("\nAssistant> ", end="", flush=True)
-            if cfg.ollama_stream:
-                for line in response.iter_lines(decode_unicode=True):
-                    if not line:
-                        continue
-                    if isinstance(line, bytes):
-                        line = line.decode("utf-8", errors="replace")
-                    if line.startswith("data:"):
-                        line = line[5:].strip()
-                    if line == "[DONE]":
-                        break
-                    try:
-                        chunk = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
-                    choices = chunk.get("choices") or []
-                    if not choices:
-                        continue
-                    delta = (choices[0].get("delta") or {}) if isinstance(choices[0], dict) else {}
-                    piece = delta.get("content") or ""
-                    if piece:
-                        full_text += piece
-                        print(piece, end="", flush=True)
-                print("\n")
-            else:
-                body = response.json()
-                choices = body.get("choices") or []
-                if choices:
-                    msg = choices[0].get("message") or {}
-                    full_text = (msg.get("content") or "").strip()
-                if full_text:
-                    print(full_text, end="", flush=True)
-                print("\n")
-
-            if full_text.strip():
-                return full_text.strip()
-
-            fallback = requests.post(
-                url,
-                headers=headers,
-                json={
-                    "model": cfg.openai_model,
-                    "messages": messages,
-                    "temperature": cfg.ollama_temperature,
-                    "max_tokens": cfg.ollama_num_predict,
-                    "stream": False,
-                },
-                timeout=cfg.ollama_timeout_secs,
-            )
-            fallback.raise_for_status()
-            fb = fallback.json()
-            fchoices = fb.get("choices") or []
-            if fchoices:
-                fmsg = fchoices[0].get("message") or {}
-                fb_text = (fmsg.get("content") or "").strip()
-                if fb_text:
-                    return fb_text
-            raise RuntimeError("OpenAI-compatible API returned an empty response.")
+            return _openai_chat_with_continuation(cfg, messages)
         except ReadTimeout as exc:
             last_error = exc
             print(
@@ -442,6 +506,76 @@ def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
     }
 
 
+def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str) -> dict[str, Any]:
+    """VirusTotal API v3 file lookup by SHA256; upload if unknown (same key as URL tool)."""
+    if not cfg.virustotal_api_key:
+        return {
+            "tool": "virustotal_file_report",
+            "ok": False,
+            "error": "Missing VIRUSTOTAL_API_KEY in .env",
+            "filename": filename,
+        }
+
+    max_mb = max(1, int(os.getenv("VIRUSTOTAL_MAX_FILE_MB", "32")))
+    max_bytes = max_mb * 1024 * 1024
+    if len(file_body) > max_bytes:
+        return {
+            "tool": "virustotal_file_report",
+            "ok": False,
+            "error": f"File exceeds VIRUSTOTAL_MAX_FILE_MB={max_mb}",
+            "filename": filename,
+            "size_bytes": len(file_body),
+        }
+
+    headers = {"x-apikey": cfg.virustotal_api_key}
+    sha256_hex = hashlib.sha256(file_body).hexdigest()
+
+    api_url = f"https://www.virustotal.com/api/v3/files/{sha256_hex}"
+    response = requests.get(api_url, headers=headers, timeout=60)
+    if response.status_code == 404:
+        upload_name = filename.strip() or "upload.bin"
+        submit = requests.post(
+            "https://www.virustotal.com/api/v3/files",
+            headers=headers,
+            files={"file": (upload_name, file_body)},
+            timeout=120,
+        )
+        submit.raise_for_status()
+        submit_body = submit.json()
+        file_id = ((submit_body.get("data") or {}).get("id") or sha256_hex)
+        return {
+            "tool": "virustotal_file_report",
+            "ok": True,
+            "filename": upload_name,
+            "sha256": sha256_hex,
+            "status": "submitted_for_analysis",
+            "file_id": file_id,
+            "note": "File submitted to VirusTotal. Ask again shortly for full analysis.",
+        }
+
+    response.raise_for_status()
+    body = response.json()
+    attrs = ((body.get("data") or {}).get("attributes") or {})
+    stats = attrs.get("last_analysis_stats") or {}
+    return {
+        "tool": "virustotal_file_report",
+        "ok": True,
+        "filename": filename,
+        "sha256": sha256_hex,
+        "meaningful_name": attrs.get("meaningful_name"),
+        "type_description": attrs.get("type_description"),
+        "size": attrs.get("size"),
+        "last_analysis_date": attrs.get("last_analysis_date"),
+        "last_analysis_stats": {
+            "malicious": stats.get("malicious", 0),
+            "suspicious": stats.get("suspicious", 0),
+            "harmless": stats.get("harmless", 0),
+            "undetected": stats.get("undetected", 0),
+            "timeout": stats.get("timeout", 0),
+        },
+    }
+
+
 def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
     tool_results: list[dict[str, Any]] = []
     urls = extract_urls(question)
@@ -464,20 +598,20 @@ def print_tool_results(tool_results: list[dict[str, Any]]) -> None:
     for item in tool_results:
         tool_name = item.get("tool", "unknown_tool")
         ok = item.get("ok", False)
-        url = item.get("url", "")
+        label = item.get("url") or item.get("filename") or item.get("sha256") or ""
         if not ok:
-            print(f"[tool] {tool_name} failed for {url}: {item.get('error', 'unknown error')}")
+            print(f"[tool] {tool_name} failed ({label}): {item.get('error', 'unknown error')}")
             continue
         stats = item.get("last_analysis_stats", {})
         if stats:
             print(
-                f"[tool] {tool_name} ok for {url} | "
+                f"[tool] {tool_name} ok ({label}) | "
                 f"malicious={stats.get('malicious', 0)} "
                 f"suspicious={stats.get('suspicious', 0)} "
                 f"harmless={stats.get('harmless', 0)}"
             )
         else:
-            print(f"[tool] {tool_name} ok for {url} | status={item.get('status', 'done')}")
+            print(f"[tool] {tool_name} ok ({label}) | status={item.get('status', 'done')}")
 
 
 def build_tool_evidence(tool_results: list[dict[str, Any]] | None) -> str:
@@ -664,14 +798,31 @@ def chat_turn(
     bm25: BM25Okapi,
     question: str,
     history: list[dict[str, str]],
+    uploaded_file: tuple[bytes, str] | None = None,
 ) -> str:
     """
     Single user question → answer using the same pipeline as CLI (BM25 + tools + LLM).
+    Optional uploaded_file: (raw bytes, filename) → VirusTotal file scan (same API family as URL tool).
     Mutates history by appending user + assistant messages on success.
     """
     matches = retrieve_context_bm25(rows, bm25, cfg, question)
     context_block = build_context_block(matches, cfg.max_context_chars)
-    tool_results = maybe_run_tools(cfg, question)
+    tool_results: list[dict[str, Any]] = []
+    if uploaded_file is not None:
+        raw, fname = uploaded_file
+        if raw:
+            try:
+                tool_results.append(tool_virustotal_file_report(cfg, raw, fname))
+            except RequestException as exc:
+                tool_results.append(
+                    {
+                        "tool": "virustotal_file_report",
+                        "ok": False,
+                        "filename": fname,
+                        "error": str(exc),
+                    }
+                )
+    tool_results.extend(maybe_run_tools(cfg, question))
     answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer})
