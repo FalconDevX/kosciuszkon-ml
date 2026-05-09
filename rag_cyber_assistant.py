@@ -537,6 +537,69 @@ def _vt_file_headers(api_key: str) -> dict[str, str]:
     return {"x-apikey": api_key, "accept": "application/json"}
 
 
+def _vt_fetch_file_comments(api_key: str, file_id: str) -> list[dict[str, Any]]:
+    """
+    GET https://www.virustotal.com/api/v3/files/{id}/comments (paginated).
+    file_id is the VirusTotal file identifier (SHA256 for known files).
+    Failures are swallowed — returns partial or empty list (never raises).
+    """
+    file_id = (file_id or "").strip()
+    if not file_id:
+        return []
+    headers = _vt_file_headers(api_key)
+    max_items = max(1, int(os.getenv("VIRUSTOTAL_COMMENTS_LIMIT", "40")))
+    max_pages = max(1, int(os.getenv("VIRUSTOTAL_COMMENTS_MAX_PAGES", "5")))
+    per_comment_chars = max(100, int(os.getenv("VIRUSTOTAL_COMMENT_MAX_CHARS", "2000")))
+    out: list[dict[str, Any]] = []
+    url: str | None = f"https://www.virustotal.com/api/v3/files/{file_id}/comments"
+    pages = 0
+    while url and pages < max_pages and len(out) < max_items:
+        try:
+            resp = requests.get(url, headers=headers, timeout=45)
+        except RequestException:
+            break
+        if resp.status_code == 404:
+            break
+        if resp.status_code != 200:
+            break
+        try:
+            payload = resp.json()
+        except ValueError:
+            break
+        for item in payload.get("data") or []:
+            if not isinstance(item, dict):
+                continue
+            attrs = item.get("attributes") or {}
+            if not isinstance(attrs, dict):
+                continue
+            text = attrs.get("text")
+            if not isinstance(text, str) or not text.strip():
+                continue
+            text = text.strip()
+            if len(text) > per_comment_chars:
+                text = text[: per_comment_chars - 3] + "..."
+            entry: dict[str, Any] = {
+                "text": text,
+                "date": attrs.get("date"),
+            }
+            votes = attrs.get("votes")
+            if isinstance(votes, dict):
+                entry["votes"] = {
+                    "positive": int(votes.get("positive") or 0),
+                    "negative": int(votes.get("negative") or 0),
+                }
+            out.append(entry)
+            if len(out) >= max_items:
+                break
+        pages += 1
+        if len(out) >= max_items:
+            break
+        links = payload.get("links") or {}
+        nxt = links.get("next") if isinstance(links, dict) else None
+        url = nxt if isinstance(nxt, str) and nxt.startswith("http") else None
+    return out
+
+
 def _vt_analysis_poll_settings() -> tuple[float, int]:
     interval = float(os.getenv("VIRUSTOTAL_ANALYSIS_POLL_INTERVAL_SECS", "2"))
     max_wait = int(os.getenv("VIRUSTOTAL_ANALYSIS_POLL_MAX_SECS", "120"))
@@ -710,9 +773,16 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
 
     response.raise_for_status()
     body = response.json()
-    attrs = ((body.get("data") or {}).get("attributes") or {})
+    data = body.get("data") or {}
+    vt_file_id = ""
+    if isinstance(data, dict):
+        fid = data.get("id")
+        if isinstance(fid, str) and fid.strip():
+            vt_file_id = fid.strip()
+    file_id_for_comments = vt_file_id or sha256_hex
+    attrs = (data.get("attributes") or {}) if isinstance(data, dict) else {}
     stats = attrs.get("last_analysis_stats") or {}
-    return {
+    result: dict[str, Any] = {
         "tool": "virustotal_file_report",
         "ok": True,
         "filename": filename,
@@ -729,6 +799,10 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
             "timeout": stats.get("timeout", 0),
         },
     }
+    comments = _vt_fetch_file_comments(cfg.virustotal_api_key, file_id_for_comments)
+    if comments:
+        result["community_comments"] = comments
+    return result
 
 
 def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
