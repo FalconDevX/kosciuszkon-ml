@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import sys
+import io
 import json
 import base64
 import re
@@ -10,6 +12,41 @@ from typing import Any
 from requests.exceptions import RequestException, ReadTimeout
 
 import requests
+
+
+def _configure_stdio_utf8() -> None:
+    """Avoid Polish mojibake (narzÄdzie) when UTF-8 is printed but console expects CP1252."""
+    if sys.platform == "win32":
+        try:
+            import ctypes
+
+            ctypes.windll.kernel32.SetConsoleOutputCP(65001)
+            ctypes.windll.kernel32.SetConsoleCP(65001)
+        except Exception:
+            pass
+
+    enc = getattr(sys.stdout, "encoding", None) or ""
+    if enc.lower().replace("-", "") == "utf8":
+        return
+    if hasattr(sys.stdout, "reconfigure"):
+        try:
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+    else:
+        try:
+            sys.stdout = io.TextIOWrapper(
+                sys.stdout.buffer, encoding="utf-8", errors="replace", line_buffering=True
+            )
+            sys.stderr = io.TextIOWrapper(
+                sys.stderr.buffer, encoding="utf-8", errors="replace", line_buffering=True
+            )
+        except Exception:
+            pass
+
+
+_configure_stdio_utf8()
 from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 
