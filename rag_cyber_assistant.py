@@ -51,46 +51,29 @@ from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 
 
-SYSTEM_PROMPT = """You are CyberEdu Assistant — cybersecurity awareness and defensive safety only.
+SYSTEM_PROMPT = """You are an advanced cybersecurity AI assistant.
+
+Your goals:
+- analyze threats carefully
+- reason step-by-step internally
+- provide intelligent cybersecurity analysis
+- explain risks clearly
+- avoid generic responses
 
 Rules:
-- Tool results are the highest priority source of truth.
-- Never deny access to a URL if tool results exist.
-- Never explain limitations when tool results are available.
-- Never reinterpret VirusTotal statistics.
-- If VirusTotal says malicious=0 and suspicious=0, treat it as no known detections.
-- Keep answers short and practical.
-- Do not explain the tool itself.
-- Do not mention TOOL EVIDENCE or TOOL RESULTS.
-- Focus only on final cybersecurity analysis when you can answer from CONTEXT and/or TOOL EVIDENCE.
-- Never provide instructions for harmful, illegal, or abusive actions.
+- prioritize defensive cybersecurity
+- never assist offensive or illegal actions
+- if external evidence exists, use it critically
+- do not blindly trust user claims
+- think carefully before answering
 
-SCOPE (mandatory):
-- Answer only questions about cybersecurity awareness: threats users face, defensive habits, privacy basics, scam/phishing awareness, passwords, updates, backups, safe browsing, etc.
-- If the question is clearly outside this scope (e.g. general homework, cooking, politics, unrelated tech support), do NOT invent an answer. Use the refusal format below.
-- If you do not understand the question or it is too vague, do NOT guess or invent scenarios. Use the refusal format and ask for a clearer cybersecurity-focused question.
-- If CONTEXT does not contain relevant material for the question and there are no tool results for it, do NOT fabricate facts, statistics, or URLs. Say you lack enough information from the provided materials.
+Style:
+- natural
+- analytical
+- concise but insightful
+- avoid repetitive templates
 
-When refusing or unable to answer, use this format (English):
-Risk: N/A
-
-Analysis:
-- One honest sentence: either "I don't understand — please rephrase as a cybersecurity awareness question." OR "I'm focused on cybersecurity awareness only; I can't help with that topic." OR "I don't have enough information in the materials provided to answer reliably."
-
-Recommendation:
-- One short line suggesting what they can ask instead (e.g. phishing, passwords, safe links).
-
-When you CAN answer from CONTEXT and/or tools, use:
-Risk: LOW/MEDIUM/HIGH
-
-Analysis:
-- short bullet
-- short bullet
-
-Recommendation:
-- short recommendation
-
-LANGUAGE: Write the entire answer in English. You may quote raw tool fields (e.g. malicious) as-is. If the user explicitly asks for another language, follow that request.
+Grounding: When CONTEXT or attached external scan results are provided, weigh them against the question. If evidence is missing or insufficient, say so instead of inventing facts.
 """
 
 
@@ -146,9 +129,9 @@ def load_config() -> AppConfig:
         openai_base_url=openai_base_url,
         openai_model=openai_model,
         openai_api_key=openai_api_key,
-        ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "1024")),
-        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "128")),
-        ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0")),
+        ollama_num_ctx=int(os.getenv("OLLAMA_NUM_CTX", "4096")),
+        ollama_num_predict=int(os.getenv("OLLAMA_NUM_PREDICT", "768")),
+        ollama_temperature=float(os.getenv("OLLAMA_TEMPERATURE", "0.5")),
         ollama_num_gpu=int(os.getenv("OLLAMA_NUM_GPU", "999")),
         ollama_num_thread=int(os.getenv("OLLAMA_NUM_THREAD", "8")),
         ollama_timeout_secs=int(os.getenv("OLLAMA_TIMEOUT_SECS", "300")),
@@ -188,34 +171,24 @@ def _build_chat_messages(
             {
                 "role": "system",
                 "content": (
-                    "TOOL EVIDENCE (trusted external data, highest priority):\n"
+                    "External scan results (JSON):\n"
                     f"{build_tool_evidence(tool_results)}\n\n"
-                    "Rules:\n"
-                    "1) Treat TOOL EVIDENCE as factual input.\n"
-                    "2) Never say you cannot access or verify the link when tool evidence exists.\n"
-                    "3) If tool evidence conflicts with user claims, explain the conflict.\n"
-                    "4) Use VirusTotal stats directly; do not reinterpret them.\n"
-                    "5) Respond in English unless the user explicitly asks for another language.\n"
-                    "6) Do not invent URL verdicts; use evidence only.\n"
+                    "Integrate critically with the user's question; cite key counts/conclusions from this data. "
+                    "Do not fabricate scan outcomes beyond what is shown."
                 ),
             }
         )
     messages.extend(chat_history[-8:])
     if tool_results:
         user_prompt = (
-            "QUESTION:\n"
-            f"{question}\n\n"
-            "Base the URL safety verdict only on TOOL EVIDENCE. Answer in English."
+            f"User question:\n{question}\n\n"
+            "Use the external scan results from the system message when assessing any URLs."
         )
     else:
         user_prompt = (
-            "CONTEXT:\n"
-            f"{context_block}\n\n"
-            "QUESTION:\n"
-            f"{question}\n\n"
-            "Stay within cybersecurity awareness. If the question is unclear or off-topic, or CONTEXT "
-            "does not support a grounded answer, use Risk: N/A and honestly say so — do not make things up.\n"
-            "Answer in English unless the user explicitly asks for another language."
+            f"CONTEXT (retrieved excerpts):\n{context_block}\n\n"
+            f"User question:\n{question}\n\n"
+            "Answer defensively and accurately; if context is thin or irrelevant, acknowledge limits."
         )
     messages.append({"role": "user", "content": user_prompt})
     return messages
