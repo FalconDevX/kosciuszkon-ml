@@ -23,7 +23,7 @@ from rag_cyber_assistant import (
     _validate_llm_config,
 )
 
-# Lifespan state (set after startup).
+                                     
 _cfg: AppConfig | None = None
 _rows: list[dict[str, Any]] | None = None
 _bm25: Any | None = None
@@ -70,6 +70,10 @@ class ChatRequest(BaseModel):
     web_search: bool = Field(
         default=False,
         description="If true, force one DuckDuckGo web_search on the user message (in addition to explicit 'szukaj:' triggers).",
+    )
+    locale: str | None = Field(
+        default=None,
+        description="UI locale (e.g. pl, en) for in-app wiki/quiz Markdown links in replies.",
     )
 
 
@@ -149,6 +153,7 @@ async def chat(request: Request):
 
     uploaded: tuple[bytes, str] | None = None
     web_search = False
+    locale: str | None = None
     ct = (request.headers.get("content-type") or "").lower()
 
     if "multipart/form-data" in ct:
@@ -176,6 +181,9 @@ async def chat(request: Request):
                 uploaded = (raw_bytes, fname)
 
         web_search = _coerce_bool(form.get("web_search"), default=False)
+        loc_val = form.get("locale")
+        if loc_val is not None and str(loc_val).strip():
+            locale = str(loc_val).strip()
     else:
         try:
             body = await request.json()
@@ -189,6 +197,8 @@ async def chat(request: Request):
         history = _normalize_history(parsed.history)
         uploaded = _decode_optional_base64_file(parsed)
         web_search = bool(parsed.web_search)
+        if getattr(parsed, "locale", None):
+            locale = str(parsed.locale).strip() or None
 
     buf = io.StringIO()
     try:
@@ -201,6 +211,7 @@ async def chat(request: Request):
                 history,
                 uploaded_file=uploaded,
                 enable_web_search=web_search,
+                locale=locale,
             )
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc

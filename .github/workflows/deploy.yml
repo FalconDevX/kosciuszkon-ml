@@ -1,13 +1,3 @@
-# Autodeploy: SSH na serwer + git pull + docker compose.
-#
-# W GitHub: Settings → Secrets and variables → Actions → New repository secret
-#   DEPLOY_KEY   — prywatny klucz SSH (cała zawartość pliku, np. -----BEGIN ... PRIVATE KEY-----)
-#   DEPLOY_HOST  — host (np. 203.0.113.10 lub vps.example.com)
-#   DEPLOY_USER  — użytkownik SSH (np. ubuntu, deploy)
-#   DEPLOY_PATH  — katalog z repo na serwerze (np. /home/ubuntu/kosciuszkon-ml)
-# Opcjonalnie: DEPLOY_PORT — port SSH (domyślnie 22); wtedy dodaj też w with: port (patrz dokumentacja appleboy/ssh-action).
-#
-# Na serwerze: w ~/.ssh/authorized_keys dodaj klucz publiczny pasujący do DEPLOY_KEY.
 
 name: Deploy
 
@@ -37,7 +27,6 @@ jobs:
             cd "${{ secrets.DEPLOY_PATH }}"
             git fetch origin main
             git reset --hard origin/main
-            # Only this project: compose down + named containers (frees 8080 for rag-api)
             docker compose down --remove-orphans 2>/dev/null || true
             docker rm -f rag-cyber-assistant rag-cyber-assistant-api 2>/dev/null || true
             docker compose pull 2>/dev/null || true

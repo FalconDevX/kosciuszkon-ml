@@ -42,7 +42,7 @@ def pick_device() -> str:
         if torch.backends.mps.is_available():
             return "mps"
         raise SystemExit("EMBED_DEVICE=mps but MPS is not available.")
-    # auto
+          
     if torch.cuda.is_available():
         return "cuda"
     if torch.backends.mps.is_available():

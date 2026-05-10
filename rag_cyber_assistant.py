@@ -76,12 +76,78 @@ Behavior:
 - For concepts (“what is malware?”), explain briefly with a concrete angle when helpful.
 - For phishing/social engineering stories, help spot red flags practically.
 - Use RAG CONTEXT when relevant; if it is thin or off-topic, say so briefly and rely on general knowledge.
+- When the user wants to read or practice on this platform, suggest specific wiki articles or quiz categories using Markdown links from the separate platform-navigation system message (relative paths only).
 
 Limits:
 - Refuse offensive exploits / hacking others — one short sentence.
 - Never fabricate VirusTotal results or claim safety without actual scan data in context.
 - Off-topic harassment: decline in one sentence.
 """
+
+_platform_catalog: dict[str, Any] | None = None
+
+
+def normalize_ui_locale(locale: str | None) -> str:
+    if not locale:
+        return "pl"
+    s = str(locale).strip().lower().replace("_", "-")
+    if s.startswith("en"):
+        return "en"
+    return "pl"
+
+
+def _load_platform_catalog() -> dict[str, Any]:
+    global _platform_catalog
+    if _platform_catalog is not None:
+        return _platform_catalog
+    path = Path(__file__).resolve().parent / "data" / "platform_catalog.json"
+    if path.is_file():
+        try:
+            _platform_catalog = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            _platform_catalog = {"articles": [], "quiz_categories": []}
+    else:
+        _platform_catalog = {"articles": [], "quiz_categories": []}
+    return _platform_catalog
+
+
+def build_platform_nav_instruction(locale: str | None) -> str:
+    loc = normalize_ui_locale(locale)
+    cat = _load_platform_catalog()
+    prefix = f"/{loc}"
+    wiki_hub = "Cyber wiki" if loc == "en" else "Wiki pojęć"
+    quiz_hub = "Quizzes" if loc == "en" else "Quizy"
+    lines: list[str] = [
+        "Kościuszkon in-app navigation (add Markdown links only when it helps; mirror the user’s language for link labels):",
+        f"- Wiki index: [{wiki_hub}]({prefix}/wiki-concepts)",
+        f"- Quiz index: [{quiz_hub}]({prefix}/quiz)",
+        "",
+        "Wiki articles (use EXACT `article` query value from backticks):",
+    ]
+    for article in cat.get("articles") or []:
+        aid = str(article.get("id") or "").strip()
+        if not aid:
+            continue
+        title_pl = str(article.get("title_pl") or "").strip()
+        title_en = str(article.get("title_en") or title_pl).strip()
+        label = title_en if loc == "en" else title_pl
+        q = quote(aid, safe="")
+        lines.append(f"- `{aid}` → [{label}]({prefix}/wiki-concepts?article={q})")
+    lines.append("")
+    lines.append("Quiz category deep links (`category` query must match exactly):")
+    for qc in cat.get("quiz_categories") or []:
+        cname = str(qc.get("category") or "").strip()
+        if not cname:
+            continue
+        cq = quote(cname, safe="")
+        lines.append(f"- [{cname}]({prefix}/quiz?category={cq})")
+    lines.append("")
+    lines.append(
+        "Use relative URLs exactly as above (leading /). Do not invent article ids. "
+        "Prefer wiki deep links for reading and quiz links for practice."
+    )
+    return "\n".join(lines)
+
 
 OLLAMA_TOOL_SYSTEM_SUFFIX = """
 
@@ -183,8 +249,13 @@ def _build_chat_messages(
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None,
+    *,
+    locale: str | None = None,
 ) -> list[dict[str, str]]:
-    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages: list[dict[str, str]] = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "system", "content": build_platform_nav_instruction(locale)},
+    ]
     if tool_results:
         messages.append(
             {
@@ -967,7 +1038,7 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
                     "filename": upload_name,
                     "size_bytes": size,
                 }
-            # Signed upload URL (App Engine) — same as vt-py: POST multipart only, no x-apikey.
+                                                                                               
             submit = _vt_submit_file_multipart(
                 large_url,
                 cfg.virustotal_api_key,
@@ -989,7 +1060,7 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
                 "sha256": sha256_hex,
                 "error": str(exc),
             }
-        # Analysis done — fetch full file report (brief retry for VT indexing).
+                                                                               
         response = None
         for _ in range(8):
             response = requests.get(api_url, headers=headers, timeout=60)
@@ -1256,10 +1327,13 @@ def _build_ollama_tool_messages(
     context_block: str,
     chat_history: list[dict[str, str]],
     prefetch_tool_results: list[dict[str, Any]] | None,
+    *,
+    locale: str | None = None,
 ) -> list[dict[str, Any]]:
     """Initial messages for Ollama tool-calling loop (URLs via model; file scans still prefetched)."""
     msgs: list[dict[str, Any]] = [
         {"role": "system", "content": SYSTEM_PROMPT + OLLAMA_TOOL_SYSTEM_SUFFIX},
+        {"role": "system", "content": build_platform_nav_instruction(locale)},
     ]
     if prefetch_tool_results:
         msgs.append(
@@ -1532,16 +1606,22 @@ def ask_llm(
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None = None,
+    *,
+    locale: str | None = None,
 ) -> str:
     if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
-        messages = _build_chat_messages(question, context_block, chat_history, tool_results)
+        messages = _build_chat_messages(
+            question, context_block, chat_history, tool_results, locale=locale
+        )
         return ask_openai_compatible(cfg, messages)
     if cfg.llm_backend == "ollama" and cfg.ollama_tool_calling:
         tool_msgs = _build_ollama_tool_messages(
-            question, context_block, chat_history, tool_results
+            question, context_block, chat_history, tool_results, locale=locale
         )
         return ask_ollama_with_tools(cfg, tool_msgs)
-    messages = _build_chat_messages(question, context_block, chat_history, tool_results)
+    messages = _build_chat_messages(
+        question, context_block, chat_history, tool_results, locale=locale
+    )
     return ask_ollama(cfg, messages)
 
 
@@ -1578,6 +1658,7 @@ def chat_turn(
     history: list[dict[str, str]],
     uploaded_file: tuple[bytes, str] | None = None,
     enable_web_search: bool = False,
+    locale: str | None = None,
 ) -> tuple[str, list[dict[str, Any]]]:
     """
     Single user question → (answer, tool_results) using the same pipeline as CLI (BM25 + tools + LLM).
@@ -1609,7 +1690,9 @@ def chat_turn(
         tool_results.append(tool_web_search(cfg, question.strip()))
     if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
         tool_results.extend(maybe_run_virustotal_tools(cfg, question))
-    answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
+    answer = ask_llm(
+        cfg, question, context_block, history, tool_results=tool_results, locale=locale
+    )
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer})
     return answer, tool_results

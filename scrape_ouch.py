@@ -57,14 +57,14 @@ def fetch_issue_links(session: requests.Session, source_url: str) -> list[dict]:
 
 
 def resolve_pdf_url(session: requests.Session, url: str) -> str:
-    # Follow redirects and read final URL.
+                                          
     response = session.get(url, timeout=45, allow_redirects=True, stream=True)
     response.raise_for_status()
     final_url = response.url
     content_type = response.headers.get("Content-Type", "").lower()
     response.close()
 
-    # Some links end without .pdf but still serve PDF.
+                                                      
     if "pdf" in content_type or final_url.lower().endswith(".pdf"):
         return final_url
     return ""
