@@ -62,11 +62,13 @@ You handle casual slang and technical questions alike (e.g. “hej sprawdź ten 
 
 TOOLS AND EVIDENCE (follow exactly — this deployment does not parse fake XML tool tags in your reply text):
 
-1) Prefetched VirusTotal JSON — When a system message contains “External scan results” with JSON, those scans already ran on the server. Each object has a `"tool"` field, e.g. `virustotal_url_report`, `virustotal_ip_report`, `virustotal_file_report`. Summarize for the user in plain language: engine counts, reputation, categories, country/ASN for IPs — never dump raw JSON. Do not invent scan outcomes.
+1) Prefetched VirusTotal JSON — When a system message contains external tool JSON with VirusTotal data, those scans already ran on the server. Each object has a `"tool"` field, e.g. `virustotal_url_report`, `virustotal_ip_report`, `virustotal_file_report`. Summarize for the user in plain language: engine counts, reputation, categories, country/ASN for IPs — never dump raw JSON. Do not invent scan outcomes.
 
-2) Native API tools — When the runtime exposes function tools (e.g. Ollama tool calling), you may call `virustotal_url_report` for http(s) URLs and `virustotal_ip_report` for IPv4/IPv6 addresses when the user asks to verify safety/reputation and the value appears in the message. After tool results return, interpret them clearly.
+2) Web search snippets — When JSON includes `web_search`, those are real-time search result titles/links/snippets (not your prior knowledge). Summarize and cite sources by title/URL; warn that snippets can be wrong or outdated.
 
-3) Files — Do not try to trigger a file scan yourself; uploads are handled by the backend. If file-scan JSON is present in context, interpret it and do not claim “no file was attached.”
+3) Native API tools — When the runtime exposes function tools (e.g. Ollama tool calling), you may call `virustotal_url_report` for http(s) URLs and `virustotal_ip_report` for IPv4/IPv6 addresses when the user asks to verify safety/reputation and the value appears in the message. Call `web_search` when the user wants current web information, news, or facts not in CONTEXT. After tool results return, interpret them clearly.
+
+4) Files — Do not try to trigger a file scan yourself; uploads are handled by the backend. If file-scan JSON is present in context, interpret it and do not claim “no file was attached.”
 
 Behavior:
 - Match user language and tone; stay conversational, not robotic.
@@ -86,7 +88,8 @@ OLLAMA_TOOL_SYSTEM_SUFFIX = """
 Native tools (only when the API supplies them):
 - Call `virustotal_url_report` with the full URL (scheme included) when the user wants a link checked.
 - Call `virustotal_ip_report` with the IP string when the user wants an address checked.
-- After results: use the returned numbers; never invent counts.
+- Call `web_search` with a short factual query when the user needs up-to-date web information not in CONTEXT.
+- After results: use the returned numbers/snippets; never invent counts or URLs.
 """
 
 
@@ -187,10 +190,11 @@ def _build_chat_messages(
             {
                 "role": "system",
                 "content": (
-                    "External scan results (JSON):\n"
+                    "External tool results (JSON):\n"
                     f"{build_tool_evidence(tool_results)}\n\n"
-                    "These are real VirusTotal outcomes from the server. Summarize in the user's language; "
-                    "do not print raw JSON. Do not fabricate numbers beyond this data."
+                    "Summarize in the user's language; do not print raw JSON. VirusTotal objects are "
+                    "malware/reputation scans; `web_search` objects are live search snippets (verify claims). "
+                    "Do not fabricate data beyond this JSON."
                 ),
             }
         )
@@ -207,9 +211,9 @@ def _build_chat_messages(
                 break
         user_prompt = (
             f"User question:\n{question}{upload_hint}\n"
-            "Use the external scan results in the system message. Each object has a "
-            "`tool` field (e.g. virustotal_url_report, virustotal_ip_report, virustotal_file_report). "
-            "Answer in the same language as the user; summarize detections, not raw JSON."
+            "Use the external tool results in the system message. Each object has a "
+            "`tool` field (virustotal_*, web_search). Answer in the user's language; "
+            "summarize — do not dump raw JSON."
         )
     else:
         user_prompt = (
@@ -509,6 +513,104 @@ def extract_ips(text: str) -> list[str]:
             continue
         add_raw(t)
     return out
+
+
+def _web_search_enabled_from_env() -> bool:
+    return os.getenv("WEB_SEARCH_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+
+
+_WEB_TRIG_LINE = re.compile(
+    r"(?is)^(?:szukaj|wyszukaj|znajdź\s+w\s+sieci|przeszukaj\s+internet"
+    r"|search\s+(?:the\s+)?web\s+for|search|google|look\s+up)\s*[:：]\s*(.+)$"
+)
+_WEB_TRIG_PREFIX = re.compile(
+    r"(?is)^(?:szukaj|wyszukaj|search|google)\s+(.+)$"
+)
+
+
+def extract_web_search_queries(text: str) -> list[str]:
+    """
+    Explicit intent only (avoids firing on every message).
+    Examples: "szukaj: ransomware trends", "search: CVE-2024", line-wise triggers.
+    """
+    if not _web_search_enabled_from_env():
+        return []
+    out: list[str] = []
+    seen: set[str] = set()
+    for line in text.strip().splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        m = _WEB_TRIG_LINE.match(s)
+        if not m:
+            m = _WEB_TRIG_PREFIX.match(s)
+        if not m:
+            continue
+        q = (m.group(1) or "").strip().strip('"\'')
+        if not q or len(q) > 500:
+            continue
+        key = q.casefold()
+        if key not in seen:
+            seen.add(key)
+            out.append(q)
+        if len(out) >= 2:
+            break
+    return out
+
+
+def tool_web_search(_cfg: AppConfig, query: str) -> dict[str, Any]:
+    """DuckDuckGo text search — no API key; returns titled snippets for the LLM."""
+    if not _web_search_enabled_from_env():
+        return {
+            "tool": "web_search",
+            "ok": False,
+            "query": query.strip(),
+            "error": "web search disabled (WEB_SEARCH_ENABLED=false)",
+        }
+    query = query.strip()
+    if not query:
+        return {"tool": "web_search", "ok": False, "error": "empty query"}
+    try:
+        from duckduckgo_search import DDGS
+    except ImportError:
+        return {
+            "tool": "web_search",
+            "ok": False,
+            "query": query,
+            "error": "duckduckgo-search is not installed (pip install duckduckgo-search)",
+        }
+    max_results = max(1, min(15, int(os.getenv("WEB_SEARCH_MAX_RESULTS", "8"))))
+    max_snippet = max(80, int(os.getenv("WEB_SEARCH_SNIPPET_CHARS", "400")))
+    rows: list[dict[str, Any]] = []
+    try:
+        with DDGS() as ddgs:
+            gen = ddgs.text(query, max_results=max_results)
+            if gen:
+                for r in gen:
+                    if not isinstance(r, dict):
+                        continue
+                    title = str(r.get("title") or "").strip()
+                    href = str(r.get("href") or "").strip()
+                    body = str(r.get("body") or "").strip()
+                    if len(body) > max_snippet:
+                        body = body[: max_snippet - 3] + "..."
+                    rows.append({"title": title, "href": href, "snippet": body})
+    except Exception as exc:
+        return {"tool": "web_search", "ok": False, "query": query, "error": str(exc)}
+    if not rows:
+        return {
+            "tool": "web_search",
+            "ok": False,
+            "query": query,
+            "error": "no results returned (rate limit or empty index)",
+        }
+    return {
+        "tool": "web_search",
+        "ok": True,
+        "query": query,
+        "results": rows,
+        "note": "Third-party search snippets — verify critical facts.",
+    }
 
 
 def _vt_ip_path_segment(ip: str) -> str | None:
@@ -939,7 +1041,7 @@ def tool_virustotal_file_report(cfg: AppConfig, file_body: bytes, filename: str)
     return result
 
 
-def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
+def maybe_run_virustotal_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
     tool_results: list[dict[str, Any]] = []
     urls = extract_urls(question)
     if urls:
@@ -970,13 +1072,38 @@ def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
     return tool_results
 
 
+def maybe_run_web_search_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
+    """Runs when WEB_SEARCH_ENABLED and user uses szukaj:/search: style triggers."""
+    out: list[dict[str, Any]] = []
+    for q in extract_web_search_queries(question):
+        out.append(tool_web_search(cfg, q))
+    return out
+
+
+def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
+    combined = maybe_run_virustotal_tools(cfg, question)
+    combined.extend(maybe_run_web_search_tools(cfg, question))
+    return combined
+
+
 def print_tool_results(tool_results: list[dict[str, Any]]) -> None:
     for item in tool_results:
         tool_name = item.get("tool", "unknown_tool")
         ok = item.get("ok", False)
-        label = item.get("url") or item.get("ip") or item.get("filename") or item.get("sha256") or ""
+        label = (
+            item.get("url")
+            or item.get("ip")
+            or item.get("filename")
+            or item.get("sha256")
+            or item.get("query")
+            or ""
+        )
         if not ok:
             print(f"[tool] {tool_name} failed ({label}): {item.get('error', 'unknown error')}")
+            continue
+        if tool_name == "web_search":
+            n = len(item.get("results") or [])
+            print(f"[tool] {tool_name} ok (query={label!r}) | hits={n}")
             continue
         stats = item.get("last_analysis_stats", {})
         if stats:
@@ -1100,6 +1227,27 @@ def ollama_tools_schema() -> list[dict[str, Any]]:
                 },
             },
         },
+        {
+            "type": "function",
+            "function": {
+                "name": "web_search",
+                "description": (
+                    "Search the public web via DuckDuckGo (titles, URLs, short snippets). "
+                    "Use for fresh facts, news, CVE details, or anything not in CONTEXT. "
+                    "Pass a concise English or Polish query."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Search query, e.g. 'CVE-2024-1234 details' or 'phishing bank Poland'",
+                        },
+                    },
+                    "required": ["query"],
+                },
+            },
+        },
     ]
 
 
@@ -1118,9 +1266,10 @@ def _build_ollama_tool_messages(
             {
                 "role": "system",
                 "content": (
-                    "External scan results already available for this turn (JSON):\n"
+                    "External tool results already available for this turn (JSON):\n"
                     f"{build_tool_evidence(prefetch_tool_results)}\n\n"
-                    "Integrate with the user question; do not claim no file was scanned if file data is present."
+                    "Integrate with the user question (VirusTotal vs web_search); do not claim "
+                    "no file was scanned if file data is present."
                 ),
             }
         )
@@ -1174,6 +1323,11 @@ def _dispatch_ollama_tool(tc: dict[str, Any], cfg: AppConfig) -> dict[str, Any]:
             return tool_virustotal_ip_report(cfg, ip_val)
         except RequestException as exc:
             return {"tool": name, "ok": False, "ip": ip_val, "error": str(exc)}
+    if name == "web_search":
+        q = str(args.get("query") or "").strip()
+        if not q:
+            return {"tool": name, "ok": False, "error": "missing query parameter"}
+        return tool_web_search(cfg, q)
     return {"ok": False, "error": f"unknown tool: {name!r}"}
 
 
@@ -1391,6 +1545,31 @@ def ask_llm(
     return ask_ollama(cfg, messages)
 
 
+def extract_web_search_sources(
+    tool_results: list[dict[str, Any]] | None,
+) -> list[dict[str, str]]:
+    """Flatten web_search tool outputs into [{title, url}] for API responses."""
+    if not tool_results:
+        return []
+    out: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for tr in tool_results:
+        if not isinstance(tr, dict):
+            continue
+        if tr.get("tool") != "web_search" or not tr.get("ok"):
+            continue
+        for r in tr.get("results") or []:
+            if not isinstance(r, dict):
+                continue
+            url = (r.get("href") or r.get("url") or "").strip()
+            title = (r.get("title") or "").strip() or url
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            out.append({"title": title, "url": url})
+    return out
+
+
 def chat_turn(
     cfg: AppConfig,
     rows: list[dict[str, Any]],
@@ -1398,10 +1577,13 @@ def chat_turn(
     question: str,
     history: list[dict[str, str]],
     uploaded_file: tuple[bytes, str] | None = None,
-) -> str:
+    enable_web_search: bool = False,
+) -> tuple[str, list[dict[str, Any]]]:
     """
-    Single user question → answer using the same pipeline as CLI (BM25 + tools + LLM).
-    Optional uploaded_file: (raw bytes, filename) → VirusTotal file scan (same API family as URL tool).
+    Single user question → (answer, tool_results) using the same pipeline as CLI (BM25 + tools + LLM).
+    Optional uploaded_file: (raw bytes, filename) → VirusTotal file scan.
+    enable_web_search=True → force one web_search call on the full question, in addition to
+    the existing explicit-trigger extraction (e.g. "szukaj: ...").
     Mutates history by appending user + assistant messages on success.
     """
     matches = retrieve_context_bm25(rows, bm25, cfg, question)
@@ -1421,12 +1603,16 @@ def chat_turn(
                         "error": str(exc),
                     }
                 )
+    extracted_web = maybe_run_web_search_tools(cfg, question)
+    tool_results.extend(extracted_web)
+    if enable_web_search and not extracted_web and question.strip():
+        tool_results.append(tool_web_search(cfg, question.strip()))
     if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
-        tool_results.extend(maybe_run_tools(cfg, question))
+        tool_results.extend(maybe_run_virustotal_tools(cfg, question))
     answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer})
-    return answer
+    return answer, tool_results
 
 
 def model_label(cfg: AppConfig) -> str:
@@ -1455,7 +1641,7 @@ def main() -> None:
         )
         if cfg.ollama_tool_calling:
             print(
-                "Ollama tool calling: ON — model may call virustotal_url_report / virustotal_ip_report."
+                "Ollama tool calling: ON — virustotal_url_report / virustotal_ip_report / web_search."
             )
         else:
             print("Ollama tool calling: OFF — URLs are scanned via regex before the LLM (legacy).")
@@ -1481,8 +1667,9 @@ def main() -> None:
         matches = retrieve_context_bm25(rows, bm25, cfg, question)
         context_block = build_context_block(matches, cfg.max_context_chars)
         tool_results: list[dict[str, Any]] = []
+        tool_results.extend(maybe_run_web_search_tools(cfg, question))
         if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
-            tool_results = maybe_run_tools(cfg, question)
+            tool_results.extend(maybe_run_virustotal_tools(cfg, question))
         if tool_results:
             print_tool_results(tool_results)
         try:

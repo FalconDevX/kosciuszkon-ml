@@ -15,6 +15,7 @@ from rag_cyber_assistant import (
     AppConfig,
     build_bm25_index,
     chat_turn,
+    extract_web_search_sources,
     load_config,
     load_local_chunks,
     model_label,
@@ -66,11 +67,34 @@ class ChatRequest(BaseModel):
         default=None,
         description="Original filename when using file_base64 (e.g. id_ed25519.pub).",
     )
+    web_search: bool = Field(
+        default=False,
+        description="If true, force one DuckDuckGo web_search on the user message (in addition to explicit 'szukaj:' triggers).",
+    )
+
+
+class Source(BaseModel):
+    title: str
+    url: str
 
 
 class ChatResponse(BaseModel):
     response: str
     model: str
+    sources: list[Source] = Field(default_factory=list)
+
+
+def _coerce_bool(val: Any, default: bool = False) -> bool:
+    if val is None:
+        return default
+    if isinstance(val, bool):
+        return val
+    s = str(val).strip().lower()
+    if s in {"1", "true", "yes", "on"}:
+        return True
+    if s in {"0", "false", "no", "off", ""}:
+        return False
+    return default
 
 
 @app.get("/health")
@@ -124,6 +148,7 @@ async def chat(request: Request):
     bm25_index = _bm25
 
     uploaded: tuple[bytes, str] | None = None
+    web_search = False
     ct = (request.headers.get("content-type") or "").lower()
 
     if "multipart/form-data" in ct:
@@ -149,6 +174,8 @@ async def chat(request: Request):
             if raw_bytes:
                 fname = up.filename or "upload.bin"
                 uploaded = (raw_bytes, fname)
+
+        web_search = _coerce_bool(form.get("web_search"), default=False)
     else:
         try:
             body = await request.json()
@@ -161,12 +188,22 @@ async def chat(request: Request):
         message = parsed.message.strip()
         history = _normalize_history(parsed.history)
         uploaded = _decode_optional_base64_file(parsed)
+        web_search = bool(parsed.web_search)
 
     buf = io.StringIO()
     try:
         with redirect_stdout(buf):
-            answer = chat_turn(cfg, rows, bm25_index, message, history, uploaded_file=uploaded)
+            answer, tool_results = chat_turn(
+                cfg,
+                rows,
+                bm25_index,
+                message,
+                history,
+                uploaded_file=uploaded,
+                enable_web_search=web_search,
+            )
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
-    return ChatResponse(response=answer, model=model_label(cfg))
+    sources = [Source(**s) for s in extract_web_search_sources(tool_results)]
+    return ChatResponse(response=answer, model=model_label(cfg), sources=sources)
