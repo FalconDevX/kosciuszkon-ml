@@ -5,7 +5,9 @@ import io
 import json
 import hashlib
 import base64
+import ipaddress
 import re
+from urllib.parse import quote
 import heapq
 import time
 from dataclasses import dataclass
@@ -53,30 +55,38 @@ from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 
 
-SYSTEM_PROMPT = """You are an advanced cybersecurity AI assistant.
+SYSTEM_PROMPT = """You are CyberBot — a sharp, friendly cybersecurity assistant.
+You speak naturally in both Polish and English: mirror whichever language the user writes in (mixed input → mirror naturally).
 
-Your goals:
-- analyze threats carefully
-- reason step-by-step internally
-- provide intelligent cybersecurity analysis
-- explain risks clearly
-- avoid generic responses
+You handle casual slang and technical questions alike (e.g. “hej sprawdź ten link”, “co to jest phishing?”, “check this URL”).
 
-Rules:
-- prioritize defensive cybersecurity
-- never assist offensive or illegal actions
-- off-topic, abusive, or harassing input: refuse in one or two short sentences only — no long sermons or reused CONTEXT dumping
-- if external evidence exists, use it critically
-- do not blindly trust user claims
-- think carefully before answering
+TOOLS AND EVIDENCE (follow exactly — this deployment does not parse fake XML tool tags in your reply text):
 
-Style:
-- natural
-- analytical
-- concise but insightful
-- avoid repetitive templates
+1) Prefetched VirusTotal JSON — When a system message contains “External scan results” with JSON, those scans already ran on the server. Each object has a `"tool"` field, e.g. `virustotal_url_report`, `virustotal_ip_report`, `virustotal_file_report`. Summarize for the user in plain language: engine counts, reputation, categories, country/ASN for IPs — never dump raw JSON. Do not invent scan outcomes.
 
-Grounding: When CONTEXT or attached external scan results are provided, weigh them against the question. If evidence is missing or insufficient, say so instead of inventing facts.
+2) Native API tools — When the runtime exposes function tools (e.g. Ollama tool calling), you may call `virustotal_url_report` for http(s) URLs and `virustotal_ip_report` for IPv4/IPv6 addresses when the user asks to verify safety/reputation and the value appears in the message. After tool results return, interpret them clearly.
+
+3) Files — Do not try to trigger a file scan yourself; uploads are handled by the backend. If file-scan JSON is present in context, interpret it and do not claim “no file was attached.”
+
+Behavior:
+- Match user language and tone; stay conversational, not robotic.
+- For vague asks with no URL/IP/file, ask one short clarifying question.
+- For concepts (“what is malware?”), explain briefly with a concrete angle when helpful.
+- For phishing/social engineering stories, help spot red flags practically.
+- Use RAG CONTEXT when relevant; if it is thin or off-topic, say so briefly and rely on general knowledge.
+
+Limits:
+- Refuse offensive exploits / hacking others — one short sentence.
+- Never fabricate VirusTotal results or claim safety without actual scan data in context.
+- Off-topic harassment: decline in one sentence.
+"""
+
+OLLAMA_TOOL_SYSTEM_SUFFIX = """
+
+Native tools (only when the API supplies them):
+- Call `virustotal_url_report` with the full URL (scheme included) when the user wants a link checked.
+- Call `virustotal_ip_report` with the IP string when the user wants an address checked.
+- After results: use the returned numbers; never invent counts.
 """
 
 
@@ -105,6 +115,7 @@ class AppConfig:
     max_context_chars: int
     virustotal_api_key: str
     force_gpu: bool
+    ollama_tool_calling: bool
 
 
 def load_config() -> AppConfig:
@@ -120,7 +131,7 @@ def load_config() -> AppConfig:
     ollama_url = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").strip().rstrip("/")
     llm_backend = os.getenv("LLM_BACKEND", "ollama").strip().lower()
     openai_base_url = os.getenv("OPENAI_BASE_URL", "").strip().rstrip("/")
-    openai_model = os.getenv("OPENAI_MODEL", "").strip() or os.getenv("OLLAMA_MODEL", "qwen2.5:3b").strip()
+    openai_model = os.getenv("OPENAI_MODEL", "").strip() or os.getenv("OLLAMA_MODEL", "qwen2.5vl:3b").strip()
     openai_api_key = os.getenv("OPENAI_API_KEY", "").strip()
 
     return AppConfig(
@@ -128,7 +139,7 @@ def load_config() -> AppConfig:
         top_k=int(os.getenv("TOP_K", "5")),
         llm_backend=llm_backend,
         ollama_url=ollama_url,
-        ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
+        ollama_model=os.getenv("OLLAMA_MODEL", "qwen2.5vl:3b"),
         openai_base_url=openai_base_url,
         openai_model=openai_model,
         openai_api_key=openai_api_key,
@@ -143,6 +154,8 @@ def load_config() -> AppConfig:
         max_context_chars=int(os.getenv("MAX_CONTEXT_CHARS", "7000")),
         virustotal_api_key=os.getenv("VIRUSTOTAL_API_KEY", "").strip(),
         force_gpu=os.getenv("FORCE_GPU", "false").lower() in {"1", "true", "yes"},
+        ollama_tool_calling=os.getenv("OLLAMA_TOOL_CALLING", "true").lower()
+        in {"1", "true", "yes"},
     )
 
 
@@ -162,13 +175,59 @@ def _validate_llm_config(cfg: AppConfig) -> None:
         raise ValueError("FORCE_GPU=1 requires OLLAMA_NUM_GPU > 0.")
 
 
+def _detect_image_mime(raw: bytes, filename: str | None) -> str | None:
+    """Return MIME type if `raw` is a recognized image (PNG/JPEG/GIF/WebP/BMP), else None."""
+    if not raw:
+        return None
+    head = raw[:16]
+    if head.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if head[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if head[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if head[:4] == b"RIFF" and raw[8:12] == b"WEBP":
+        return "image/webp"
+    if head[:2] == b"BM":
+        return "image/bmp"
+    name = (filename or "").lower()
+    if name.endswith(".png"):
+        return "image/png"
+    if name.endswith((".jpg", ".jpeg")):
+        return "image/jpeg"
+    if name.endswith(".gif"):
+        return "image/gif"
+    if name.endswith(".webp"):
+        return "image/webp"
+    if name.endswith(".bmp"):
+        return "image/bmp"
+    return None
+
+
+def _attach_image_to_last_user(
+    messages: list[dict[str, Any]], image_b64: str | None
+) -> None:
+    """Mutate `messages` so the LAST user message carries `images: [b64]` (Ollama VL format)."""
+    if not image_b64:
+        return
+    for msg in reversed(messages):
+        if msg.get("role") == "user":
+            existing = msg.get("images")
+            if isinstance(existing, list):
+                existing.append(image_b64)
+            else:
+                msg["images"] = [image_b64]
+            return
+
+
 def _build_chat_messages(
     question: str,
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None,
-) -> list[dict[str, str]]:
-    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+    image_b64: str | None = None,
+) -> list[dict[str, Any]]:
+    messages: list[dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
     if tool_results:
         messages.append(
             {
@@ -176,8 +235,8 @@ def _build_chat_messages(
                 "content": (
                     "External scan results (JSON):\n"
                     f"{build_tool_evidence(tool_results)}\n\n"
-                    "Integrate critically with the user's question; cite key counts/conclusions from this data. "
-                    "Do not fabricate scan outcomes beyond what is shown."
+                    "These are real VirusTotal outcomes from the server. Summarize in the user's language; "
+                    "do not print raw JSON. Do not fabricate numbers beyond this data."
                 ),
             }
         )
@@ -194,15 +253,21 @@ def _build_chat_messages(
                 break
         user_prompt = (
             f"User question:\n{question}{upload_hint}\n"
-            "Use the external scan results in the system message for URLs and/or uploaded files."
+            "Use the external scan results in the system message. Each object has a "
+            "`tool` field (e.g. virustotal_url_report, virustotal_ip_report, virustotal_file_report). "
+            "Answer in the same language as the user; summarize detections, not raw JSON. "
+            "If an image is attached to this user message, also describe what is visible in it "
+            "and cross-reference with the scan results."
         )
     else:
         user_prompt = (
             f"CONTEXT (retrieved excerpts):\n{context_block}\n\n"
             f"User question:\n{question}\n\n"
-            "Answer defensively and accurately; if context is thin or irrelevant, acknowledge limits."
+            "Answer defensively and accurately; if context is thin or irrelevant, acknowledge limits. "
+            "If an image is attached, describe its content and any security-relevant signals."
         )
     messages.append({"role": "user", "content": user_prompt})
+    _attach_image_to_last_user(messages, image_b64)
     return messages
 
 
@@ -457,6 +522,54 @@ def extract_urls(text: str) -> list[str]:
     return unique
 
 
+_IPV4_RE = re.compile(
+    r"(?<![\w.])(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)(?![\w.])"
+)
+
+
+def extract_ips(text: str) -> list[str]:
+    """Public IPv4/IPv6 literals in free text (validated); order preserved, deduped."""
+    out: list[str] = []
+    seen: set[str] = set()
+
+    def add_raw(raw: str) -> None:
+        raw = raw.strip()
+        if not raw:
+            return
+        try:
+            addr = ipaddress.ip_address(raw.strip("[]"))
+        except ValueError:
+            return
+        canon = str(addr)
+        if canon not in seen:
+            seen.add(canon)
+            out.append(canon)
+
+    for m in _IPV4_RE.finditer(text):
+        add_raw(m.group(0))
+    for m in re.finditer(r"\[([0-9a-fA-F:.%]+)\]", text):
+        add_raw(m.group(1))
+    for token in re.split(r"[\s,;|]+", text):
+        t = token.strip().strip("()\"'")
+        t = t.rstrip(".,;:!?)")
+        if not t or (":" not in t and "." not in t):
+            continue
+        if _IPV4_RE.fullmatch(t):
+            continue
+        add_raw(t)
+    return out
+
+
+def _vt_ip_path_segment(ip: str) -> str | None:
+    try:
+        addr = ipaddress.ip_address(ip.strip())
+    except ValueError:
+        return None
+    if addr.version == 4:
+        return str(addr)
+    return quote(addr.compressed, safe="")
+
+
 def _vt_url_id(url: str) -> str:
     raw = url.encode("utf-8")
     encoded = base64.urlsafe_b64encode(raw).decode("ascii")
@@ -530,6 +643,76 @@ def tool_virustotal_url_report(cfg: AppConfig, url: str) -> dict[str, Any]:
             "timeout": stats.get("timeout", 0),
         },
     }
+
+
+def tool_virustotal_ip_report(cfg: AppConfig, ip: str) -> dict[str, Any]:
+    """VirusTotal API v3: GET /ip_addresses/{ip} — separate tool id from URL/file scans."""
+    if not cfg.virustotal_api_key:
+        return {
+            "tool": "virustotal_ip_report",
+            "ok": False,
+            "error": "Missing VIRUSTOTAL_API_KEY in .env",
+            "ip": ip,
+        }
+    segment = _vt_ip_path_segment(ip)
+    if not segment:
+        return {
+            "tool": "virustotal_ip_report",
+            "ok": False,
+            "error": "invalid IP address",
+            "ip": ip,
+        }
+    headers = {"x-apikey": cfg.virustotal_api_key, "accept": "application/json"}
+    api_url = f"https://www.virustotal.com/api/v3/ip_addresses/{segment}"
+    try:
+        response = requests.get(api_url, headers=headers, timeout=45)
+    except RequestException as exc:
+        return {
+            "tool": "virustotal_ip_report",
+            "ok": False,
+            "ip": ip,
+            "error": str(exc),
+        }
+    if response.status_code == 404:
+        return {
+            "tool": "virustotal_ip_report",
+            "ok": False,
+            "ip": ip,
+            "error": "IP not found in VirusTotal (no report yet)",
+        }
+    try:
+        response.raise_for_status()
+    except RequestException as exc:
+        return {
+            "tool": "virustotal_ip_report",
+            "ok": False,
+            "ip": ip,
+            "error": str(exc),
+        }
+    body = response.json()
+    attrs = ((body.get("data") or {}).get("attributes") or {})
+    stats = attrs.get("last_analysis_stats") or {}
+    result: dict[str, Any] = {
+        "tool": "virustotal_ip_report",
+        "ok": True,
+        "ip": ip.strip(),
+        "reputation": attrs.get("reputation"),
+        "last_analysis_date": attrs.get("last_analysis_date"),
+        "last_analysis_stats": {
+            "malicious": stats.get("malicious", 0),
+            "suspicious": stats.get("suspicious", 0),
+            "harmless": stats.get("harmless", 0),
+            "undetected": stats.get("undetected", 0),
+            "timeout": stats.get("timeout", 0),
+        },
+    }
+    if attrs.get("country") is not None:
+        result["country"] = attrs.get("country")
+    if attrs.get("asn") is not None:
+        result["asn"] = attrs.get("asn")
+    if attrs.get("as_owner") is not None:
+        result["as_owner"] = attrs.get("as_owner")
+    return result
 
 
 def _vt_file_headers(api_key: str) -> dict[str, str]:
@@ -820,6 +1003,19 @@ def maybe_run_tools(cfg: AppConfig, question: str) -> list[dict[str, Any]]:
                     "error": str(exc),
                 }
             tool_results.append(result)
+    ips = extract_ips(question)
+    if ips:
+        for ip in ips[:3]:
+            try:
+                result = tool_virustotal_ip_report(cfg, ip)
+            except RequestException as exc:
+                result = {
+                    "tool": "virustotal_ip_report",
+                    "ok": False,
+                    "ip": ip,
+                    "error": str(exc),
+                }
+            tool_results.append(result)
     return tool_results
 
 
@@ -827,7 +1023,7 @@ def print_tool_results(tool_results: list[dict[str, Any]]) -> None:
     for item in tool_results:
         tool_name = item.get("tool", "unknown_tool")
         ok = item.get("ok", False)
-        label = item.get("url") or item.get("filename") or item.get("sha256") or ""
+        label = item.get("url") or item.get("ip") or item.get("filename") or item.get("sha256") or ""
         if not ok:
             print(f"[tool] {tool_name} failed ({label}): {item.get('error', 'unknown error')}")
             continue
@@ -906,6 +1102,226 @@ def warmup_ollama_gpu_probe(cfg: AppConfig) -> None:
     )
     response.raise_for_status()
     ensure_ollama_gpu_or_raise(cfg)
+
+
+def ollama_tools_schema() -> list[dict[str, Any]]:
+    """OpenAI-style tools payload for Ollama /api/chat."""
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": "virustotal_url_report",
+                "description": (
+                    "Query VirusTotal for a URL: reputation, categories, and "
+                    "last_analysis_stats (malicious/suspicious/harmless/undetected counts). "
+                    "Use when the user asks if a link is safe, wants a URL scanned, or provides http(s) URL to check."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "url": {
+                            "type": "string",
+                            "description": "Full URL with scheme, e.g. https://example.com/path",
+                        },
+                    },
+                    "required": ["url"],
+                },
+            },
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "virustotal_ip_report",
+                "description": (
+                    "Query VirusTotal for an IP address: reputation, last_analysis_stats, "
+                    "and optional country/asn fields. Use when the user asks about an IPv4/IPv6 "
+                    "address, suspicious connections, or ‘what is this IP’."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "ip": {
+                            "type": "string",
+                            "description": "IPv4 or IPv6 address as written by the user, e.g. 203.0.113.5 or 2001:db8::1",
+                        },
+                    },
+                    "required": ["ip"],
+                },
+            },
+        },
+    ]
+
+
+def _build_ollama_tool_messages(
+    question: str,
+    context_block: str,
+    chat_history: list[dict[str, str]],
+    prefetch_tool_results: list[dict[str, Any]] | None,
+    image_b64: str | None = None,
+) -> list[dict[str, Any]]:
+    """Initial messages for Ollama tool-calling loop (URLs via model; file scans still prefetched)."""
+    msgs: list[dict[str, Any]] = [
+        {"role": "system", "content": SYSTEM_PROMPT + OLLAMA_TOOL_SYSTEM_SUFFIX},
+    ]
+    if prefetch_tool_results:
+        msgs.append(
+            {
+                "role": "system",
+                "content": (
+                    "External scan results already available for this turn (JSON):\n"
+                    f"{build_tool_evidence(prefetch_tool_results)}\n\n"
+                    "Integrate with the user question; do not claim no file was scanned if file data is present."
+                ),
+            }
+        )
+    for turn in chat_history[-8:]:
+        msgs.append({"role": turn["role"], "content": turn["content"]})
+    msgs.append(
+        {
+            "role": "user",
+            "content": (
+                f"CONTEXT (retrieved excerpts):\n{context_block}\n\n"
+                f"User question:\n{question}\n\n"
+                "If an image is attached to this user message, describe what you see and "
+                "tie it to the security context; otherwise reason purely from text + tool results."
+            ),
+        }
+    )
+    _attach_image_to_last_user(msgs, image_b64)
+    return msgs
+
+
+def _parse_tool_arguments(args_raw: Any) -> dict[str, Any]:
+    if args_raw is None:
+        return {}
+    if isinstance(args_raw, dict):
+        return args_raw
+    if isinstance(args_raw, str):
+        s = args_raw.strip()
+        if not s:
+            return {}
+        try:
+            return json.loads(s)
+        except json.JSONDecodeError:
+            return {}
+    return {}
+
+
+def _dispatch_ollama_tool(tc: dict[str, Any], cfg: AppConfig) -> dict[str, Any]:
+    fn = tc.get("function") if isinstance(tc.get("function"), dict) else {}
+    name = (fn.get("name") or "").strip()
+    args = _parse_tool_arguments(fn.get("arguments"))
+    if name == "virustotal_url_report":
+        url = str(args.get("url") or "").strip()
+        if not url:
+            return {"tool": name, "ok": False, "error": "missing url parameter"}
+        try:
+            return tool_virustotal_url_report(cfg, url)
+        except RequestException as exc:
+            return {"tool": name, "ok": False, "url": url, "error": str(exc)}
+    if name == "virustotal_ip_report":
+        ip_val = str(args.get("ip") or "").strip()
+        if not ip_val:
+            return {"tool": name, "ok": False, "error": "missing ip parameter"}
+        try:
+            return tool_virustotal_ip_report(cfg, ip_val)
+        except RequestException as exc:
+            return {"tool": name, "ok": False, "ip": ip_val, "error": str(exc)}
+    return {"ok": False, "error": f"unknown tool: {name!r}"}
+
+
+def ask_ollama_with_tools(
+    cfg: AppConfig,
+    messages: list[dict[str, Any]],
+) -> str:
+    """
+    Multi-turn Ollama /api/chat with tools (stream disabled — tool_calls need full response).
+    """
+    tools = ollama_tools_schema()
+    max_rounds = max(1, int(os.getenv("OLLAMA_TOOL_MAX_ROUNDS", "6")))
+    ollama_options: dict[str, Any] = {
+        "num_ctx": cfg.ollama_num_ctx,
+        "num_predict": cfg.ollama_num_predict,
+        "temperature": cfg.ollama_temperature,
+        "num_gpu": cfg.ollama_num_gpu,
+        "num_thread": cfg.ollama_num_thread,
+    }
+    last_error: Exception | None = None
+    for attempt in range(1, cfg.ollama_retries + 1):
+        try:
+            working: list[dict[str, Any]] = [dict(m) for m in messages]
+            for _round in range(max_rounds):
+                ensure_ollama_gpu_or_raise(cfg)
+                response = requests.post(
+                    f"{cfg.ollama_url}/api/chat",
+                    json={
+                        "model": cfg.ollama_model,
+                        "messages": working,
+                        "tools": tools,
+                        "stream": False,
+                        "keep_alive": os.getenv("OLLAMA_KEEP_ALIVE", "30m"),
+                        "options": ollama_options,
+                    },
+                    timeout=cfg.ollama_timeout_secs,
+                )
+                response.raise_for_status()
+                body = response.json()
+                msg = body.get("message") if isinstance(body.get("message"), dict) else {}
+                tool_calls = msg.get("tool_calls")
+                if not tool_calls and isinstance(body.get("tool_calls"), list):
+                    tool_calls = body.get("tool_calls")
+
+                if (
+                    isinstance(tool_calls, list)
+                    and len(tool_calls) > 0
+                    and any(isinstance(x, dict) for x in tool_calls)
+                ):
+                    assistant_out: dict[str, Any] = {
+                        "role": "assistant",
+                        "content": msg.get("content") or "",
+                    }
+                    assistant_out["tool_calls"] = tool_calls
+                    working.append(assistant_out)
+                    for tc in tool_calls:
+                        if not isinstance(tc, dict):
+                            continue
+                        result = _dispatch_ollama_tool(tc, cfg)
+                        fn = tc.get("function") if isinstance(tc.get("function"), dict) else {}
+                        tname = (fn.get("name") or "virustotal_url_report").strip()
+                        tool_msg: dict[str, Any] = {
+                            "role": "tool",
+                            "content": json.dumps(result, ensure_ascii=False),
+                            "name": tname,
+                        }
+                        tid = tc.get("id")
+                        if isinstance(tid, str) and tid.strip():
+                            tool_msg["tool_call_id"] = tid.strip()
+                        working.append(tool_msg)
+                    continue
+
+                text = str(msg.get("content") or "").strip()
+                if text:
+                    return text
+                return ""
+
+            raise RuntimeError(
+                f"Ollama tool loop exceeded OLLAMA_TOOL_MAX_ROUNDS={max_rounds} without a final answer."
+            )
+        except ReadTimeout as exc:
+            last_error = exc
+            print(
+                f"[warn] Ollama tool-call timed out (attempt {attempt}/{cfg.ollama_retries}, "
+                f"timeout={cfg.ollama_timeout_secs}s)."
+            )
+        except RequestException as exc:
+            last_error = exc
+            print(
+                f"[warn] Ollama tool-call request failed (attempt {attempt}/{cfg.ollama_retries}): {exc}"
+            )
+
+    raise RuntimeError(
+        "Ollama tool-calling failed after retries. Check OLLAMA_URL, model tool support, and logs."
+    ) from last_error
 
 
 def ask_ollama(
@@ -1014,10 +1430,24 @@ def ask_llm(
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None = None,
+    image_b64: str | None = None,
 ) -> str:
-    messages = _build_chat_messages(question, context_block, chat_history, tool_results)
     if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
+        if image_b64:
+            print(
+                "[warn] image input ignored: OpenAI-compatible backend not wired for vision in this build. "
+                "Switch LLM_BACKEND=ollama with a VL model (e.g. qwen2.5vl:3b) to enable image understanding."
+            )
+        messages = _build_chat_messages(question, context_block, chat_history, tool_results)
         return ask_openai_compatible(cfg, messages)
+    if cfg.llm_backend == "ollama" and cfg.ollama_tool_calling:
+        tool_msgs = _build_ollama_tool_messages(
+            question, context_block, chat_history, tool_results, image_b64=image_b64
+        )
+        return ask_ollama_with_tools(cfg, tool_msgs)
+    messages = _build_chat_messages(
+        question, context_block, chat_history, tool_results, image_b64=image_b64
+    )
     return ask_ollama(cfg, messages)
 
 
@@ -1037,6 +1467,7 @@ def chat_turn(
     matches = retrieve_context_bm25(rows, bm25, cfg, question)
     context_block = build_context_block(matches, cfg.max_context_chars)
     tool_results: list[dict[str, Any]] = []
+    image_b64: str | None = None
     if uploaded_file is not None:
         raw, fname = uploaded_file
         if raw:
@@ -1051,8 +1482,16 @@ def chat_turn(
                         "error": str(exc),
                     }
                 )
-    tool_results.extend(maybe_run_tools(cfg, question))
-    answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
+            mime = _detect_image_mime(raw, fname)
+            if mime is not None:
+                image_b64 = base64.b64encode(raw).decode("ascii")
+                print(f"[info] Detected image upload ({mime}, {len(raw)} bytes) — sending to VL model.")
+    if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
+        tool_results.extend(maybe_run_tools(cfg, question))
+    answer = ask_llm(
+        cfg, question, context_block, history,
+        tool_results=tool_results, image_b64=image_b64,
+    )
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer})
     return answer
@@ -1082,6 +1521,12 @@ def main() -> None:
             f"LLM: Ollama {cfg.ollama_model} at {cfg.ollama_url} "
             f"(num_gpu={cfg.ollama_num_gpu} — use GPU on host if Ollama has CUDA/ROCm)"
         )
+        if cfg.ollama_tool_calling:
+            print(
+                "Ollama tool calling: ON — model may call virustotal_url_report / virustotal_ip_report."
+            )
+        else:
+            print("Ollama tool calling: OFF — URLs are scanned via regex before the LLM (legacy).")
         if cfg.force_gpu:
             print("FORCE_GPU=1: probing Ollama and requiring GPU (see /api/ps).")
             try:
@@ -1103,7 +1548,9 @@ def main() -> None:
 
         matches = retrieve_context_bm25(rows, bm25, cfg, question)
         context_block = build_context_block(matches, cfg.max_context_chars)
-        tool_results = maybe_run_tools(cfg, question)
+        tool_results: list[dict[str, Any]] = []
+        if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
+            tool_results = maybe_run_tools(cfg, question)
         if tool_results:
             print_tool_results(tool_results)
         try:

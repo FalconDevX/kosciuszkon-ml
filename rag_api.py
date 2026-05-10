@@ -1,21 +1,4 @@
-"""
-HTTP API for rag_cyber_assistant — backend should call this instead of Ollama directly.
-
-Run: uvicorn rag_api:app --host 0.0.0.0 --port 8080
-
-Chat — VirusTotal file scan runs **on this server** before the LLM (not OpenAI-style tool calling).
-The LLM only sees JSON results in the prompt.
-
-Ways to attach a file:
-1) multipart/form-data: fields `message`, optional `history` (JSON string), optional `file` (binary).
-2) application/json: same as ChatRequest plus optional `file_base64` (standard base64) and `file_name`.
-
-If the UI sends only `{ "message": "check this file" }` without bytes, **no scan runs** — the model
-will guess from RAG context only.
-"""
-
 from __future__ import annotations
-
 import base64
 import io
 import json
