@@ -267,6 +267,7 @@ def _openai_single_completion_round(
         stream=bool(stream),
     )
     response.raise_for_status()
+    response.encoding = "utf-8"
 
     finish_reason: str | None = None
     full_text = ""
@@ -1309,6 +1310,7 @@ def ask_ollama(
                 stream=True,
             )
             response.raise_for_status()
+            response.encoding = "utf-8"
             full_text = ""
             print("\nAssistant> ", end="", flush=True)
             if cfg.ollama_stream:
