@@ -131,7 +131,7 @@ def load_config() -> AppConfig:
     ollama_url = os.getenv("OLLAMA_URL", "http://127.0.0.1:11434").strip().rstrip("/")
     llm_backend = os.getenv("LLM_BACKEND", "ollama").strip().lower()
     openai_base_url = os.getenv("OPENAI_BASE_URL", "").strip().rstrip("/")
-    openai_model = os.getenv("OPENAI_MODEL", "").strip() or os.getenv("OLLAMA_MODEL", "qwen2.5vl:3b").strip()
+    openai_model = os.getenv("OPENAI_MODEL", "").strip() or os.getenv("OLLAMA_MODEL", "qwen3:8b").strip()
     openai_api_key = os.getenv("OPENAI_API_KEY", "").strip()
 
     return AppConfig(
@@ -139,7 +139,7 @@ def load_config() -> AppConfig:
         top_k=int(os.getenv("TOP_K", "5")),
         llm_backend=llm_backend,
         ollama_url=ollama_url,
-        ollama_model=os.getenv("OLLAMA_MODEL", "qwen2.5vl:3b"),
+        ollama_model=os.getenv("OLLAMA_MODEL", "qwen3:8b"),
         openai_base_url=openai_base_url,
         openai_model=openai_model,
         openai_api_key=openai_api_key,
@@ -175,59 +175,13 @@ def _validate_llm_config(cfg: AppConfig) -> None:
         raise ValueError("FORCE_GPU=1 requires OLLAMA_NUM_GPU > 0.")
 
 
-def _detect_image_mime(raw: bytes, filename: str | None) -> str | None:
-    """Return MIME type if `raw` is a recognized image (PNG/JPEG/GIF/WebP/BMP), else None."""
-    if not raw:
-        return None
-    head = raw[:16]
-    if head.startswith(b"\x89PNG\r\n\x1a\n"):
-        return "image/png"
-    if head[:3] == b"\xff\xd8\xff":
-        return "image/jpeg"
-    if head[:6] in (b"GIF87a", b"GIF89a"):
-        return "image/gif"
-    if head[:4] == b"RIFF" and raw[8:12] == b"WEBP":
-        return "image/webp"
-    if head[:2] == b"BM":
-        return "image/bmp"
-    name = (filename or "").lower()
-    if name.endswith(".png"):
-        return "image/png"
-    if name.endswith((".jpg", ".jpeg")):
-        return "image/jpeg"
-    if name.endswith(".gif"):
-        return "image/gif"
-    if name.endswith(".webp"):
-        return "image/webp"
-    if name.endswith(".bmp"):
-        return "image/bmp"
-    return None
-
-
-def _attach_image_to_last_user(
-    messages: list[dict[str, Any]], image_b64: str | None
-) -> None:
-    """Mutate `messages` so the LAST user message carries `images: [b64]` (Ollama VL format)."""
-    if not image_b64:
-        return
-    for msg in reversed(messages):
-        if msg.get("role") == "user":
-            existing = msg.get("images")
-            if isinstance(existing, list):
-                existing.append(image_b64)
-            else:
-                msg["images"] = [image_b64]
-            return
-
-
 def _build_chat_messages(
     question: str,
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None,
-    image_b64: str | None = None,
-) -> list[dict[str, Any]]:
-    messages: list[dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
+) -> list[dict[str, str]]:
+    messages: list[dict[str, str]] = [{"role": "system", "content": SYSTEM_PROMPT}]
     if tool_results:
         messages.append(
             {
@@ -255,19 +209,15 @@ def _build_chat_messages(
             f"User question:\n{question}{upload_hint}\n"
             "Use the external scan results in the system message. Each object has a "
             "`tool` field (e.g. virustotal_url_report, virustotal_ip_report, virustotal_file_report). "
-            "Answer in the same language as the user; summarize detections, not raw JSON. "
-            "If an image is attached to this user message, also describe what is visible in it "
-            "and cross-reference with the scan results."
+            "Answer in the same language as the user; summarize detections, not raw JSON."
         )
     else:
         user_prompt = (
             f"CONTEXT (retrieved excerpts):\n{context_block}\n\n"
             f"User question:\n{question}\n\n"
-            "Answer defensively and accurately; if context is thin or irrelevant, acknowledge limits. "
-            "If an image is attached, describe its content and any security-relevant signals."
+            "Answer defensively and accurately; if context is thin or irrelevant, acknowledge limits."
         )
     messages.append({"role": "user", "content": user_prompt})
-    _attach_image_to_last_user(messages, image_b64)
     return messages
 
 
@@ -1157,7 +1107,6 @@ def _build_ollama_tool_messages(
     context_block: str,
     chat_history: list[dict[str, str]],
     prefetch_tool_results: list[dict[str, Any]] | None,
-    image_b64: str | None = None,
 ) -> list[dict[str, Any]]:
     """Initial messages for Ollama tool-calling loop (URLs via model; file scans still prefetched)."""
     msgs: list[dict[str, Any]] = [
@@ -1181,13 +1130,10 @@ def _build_ollama_tool_messages(
             "role": "user",
             "content": (
                 f"CONTEXT (retrieved excerpts):\n{context_block}\n\n"
-                f"User question:\n{question}\n\n"
-                "If an image is attached to this user message, describe what you see and "
-                "tie it to the security context; otherwise reason purely from text + tool results."
+                f"User question:\n{question}"
             ),
         }
     )
-    _attach_image_to_last_user(msgs, image_b64)
     return msgs
 
 
@@ -1430,24 +1376,16 @@ def ask_llm(
     context_block: str,
     chat_history: list[dict[str, str]],
     tool_results: list[dict[str, Any]] | None = None,
-    image_b64: str | None = None,
 ) -> str:
     if cfg.llm_backend in {"openai", "hf_openai", "openai_compatible"}:
-        if image_b64:
-            print(
-                "[warn] image input ignored: OpenAI-compatible backend not wired for vision in this build. "
-                "Switch LLM_BACKEND=ollama with a VL model (e.g. qwen2.5vl:3b) to enable image understanding."
-            )
         messages = _build_chat_messages(question, context_block, chat_history, tool_results)
         return ask_openai_compatible(cfg, messages)
     if cfg.llm_backend == "ollama" and cfg.ollama_tool_calling:
         tool_msgs = _build_ollama_tool_messages(
-            question, context_block, chat_history, tool_results, image_b64=image_b64
+            question, context_block, chat_history, tool_results
         )
         return ask_ollama_with_tools(cfg, tool_msgs)
-    messages = _build_chat_messages(
-        question, context_block, chat_history, tool_results, image_b64=image_b64
-    )
+    messages = _build_chat_messages(question, context_block, chat_history, tool_results)
     return ask_ollama(cfg, messages)
 
 
@@ -1467,7 +1405,6 @@ def chat_turn(
     matches = retrieve_context_bm25(rows, bm25, cfg, question)
     context_block = build_context_block(matches, cfg.max_context_chars)
     tool_results: list[dict[str, Any]] = []
-    image_b64: str | None = None
     if uploaded_file is not None:
         raw, fname = uploaded_file
         if raw:
@@ -1482,16 +1419,9 @@ def chat_turn(
                         "error": str(exc),
                     }
                 )
-            mime = _detect_image_mime(raw, fname)
-            if mime is not None:
-                image_b64 = base64.b64encode(raw).decode("ascii")
-                print(f"[info] Detected image upload ({mime}, {len(raw)} bytes) — sending to VL model.")
     if not (cfg.llm_backend == "ollama" and cfg.ollama_tool_calling):
         tool_results.extend(maybe_run_tools(cfg, question))
-    answer = ask_llm(
-        cfg, question, context_block, history,
-        tool_results=tool_results, image_b64=image_b64,
-    )
+    answer = ask_llm(cfg, question, context_block, history, tool_results=tool_results)
     history.append({"role": "user", "content": question})
     history.append({"role": "assistant", "content": answer})
     return answer
